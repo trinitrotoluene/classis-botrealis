@@ -1,0 +1,3 @@
+[submodule "thirdparty/BitCraft_Bindings"]
+	path = thirdparty/BitCraft_Bindings
+	url = https://github.com/BitCraftToolBox/BitCraft_Bindings

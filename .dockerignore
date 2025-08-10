@@ -1,0 +1,9 @@
+node_modules
+integration
+*.test.ts
+
+.pnpm-store
+Dockerfile
+.dockerignore
+
+config.*

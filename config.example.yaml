@@ -1,0 +1,16 @@
+discord:
+  token: your-bot-token
+  dev_guild_id: "the-id-of-your-discord-server"
+  dev_app_id: "the-id-of-your-discord-app"
+postgres:
+  host: localhost
+  port: 54321
+  user: username
+  password: password
+  database: classis_botrealis
+bitcraft:
+  email: email@example.org
+  accessToken:
+  authToken:
+  uri: bitcraft-early-access.spacetimedb.com
+  module: bitcraft-1

@@ -1,0 +1,8 @@
+node_modules
+
+config.*.yaml
+!config.example.yaml
+
+.bitcraft
+
+bitcraft-identity.json
