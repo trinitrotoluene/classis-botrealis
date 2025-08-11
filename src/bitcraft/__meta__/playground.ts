@@ -12,14 +12,16 @@ const client = new BitcraftClient(
 );
 
 client.onConnected.subscribe(async ({ conn }) => {
-  await subscribeAsync(conn, ["SELECT * from empire_state"]);
+  await subscribeAsync(conn, [
+    "SELECT * from building_state",
+  ]);
 
   logger.info("Dumping data");
   fs.mkdirSync(".bitcraft", { recursive: true });
 
   fs.writeFileSync(
-    ".bitcraft/empireState.json",
-    jsonDump([...conn.db.empireState.iter()])
+    ".bitcraft/buildingState.json",
+    jsonDump([...conn.db.buildingState.iter()])
   );
 
   logger.info("Done");

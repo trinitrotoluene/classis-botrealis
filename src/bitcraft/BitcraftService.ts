@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
   AuctionListingState,
   ChatMessageState,
@@ -9,9 +10,28 @@ import { logger } from "@src/logger";
 import { BitcraftClient } from "./BitcraftClient";
 import { Config } from "@src/config";
 import { subscribeAsync } from "./subscribeAsync";
-import { PubSub, type IBitcraftAuctionOrder } from "@src/framework";
+import {
+  PubSub,
+  type IBitcraftAuctionOrder,
+  type TPubSubEventNames,
+  type TPubSubEventType,
+} from "@src/framework";
 import { mapRecipe } from "./mapRecipe";
 import { mapItem } from "./mapItem";
+import type { TableCache } from "@clockworklabs/spacetimedb-sdk";
+
+type ValidPrefixes<T extends string> = T extends
+  | `${infer Prefix}_added`
+  | `${infer Prefix}_updated`
+  | `${infer Prefix}_deleted`
+  ? Prefix
+  : never;
+
+type ExtractRowType<TTable> = TTable extends {
+  tableCache: TableCache<infer TRowType>;
+}
+  ? TRowType
+  : never;
 
 function mapAuctionListingState(
   order: AuctionListingState
@@ -35,8 +55,7 @@ export class BitcraftService {
     conn.db.chatMessageState.onInsert(this.handleChatMessageStateInsert);
     conn.db.userModerationState.onInsert(this.handleUserModerationStateInsert);
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  
   static instance: BitcraftService = undefined as any;
 
   static start(): Promise<BitcraftService> {
@@ -66,6 +85,49 @@ export class BitcraftService {
     return promise;
   }
 
+  registerEventHandlersFor<
+    TPrefix extends ValidPrefixes<TPubSubEventNames>,
+    TTable extends {
+      onInsert: (cb: (ctx: unknown, entity: any) => void) => void;
+      onUpdate: (
+        cb: (ctx: unknown, oldEntity: any, newEntity: any) => void
+      ) => void;
+      onDelete: (cb: (ctx: unknown, entity: any) => void) => void;
+    },
+  >(
+    prefix: TPrefix,
+    table: TTable,
+    mapper: (
+      entity: ExtractRowType<TTable>
+    ) => TPubSubEventType<`${TPrefix}_added`> extends {
+      entity: infer TMappedEntity;
+    }
+      ? TMappedEntity
+      : never
+  ) {
+    table.onInsert((_, row) =>
+      PubSub.publish(`${prefix}_added`, {
+        type: `${prefix}_added`,
+        entity: mapper(row),
+      } as any)
+    );
+
+    table.onUpdate((_, oldItem, newItem) =>
+      PubSub.publish(`${prefix}_updated`, {
+        type: `${prefix}_updated`,
+        oldEntity: mapItem(oldItem),
+        newEntity: mapItem(newItem),
+      } as any)
+    );
+
+    table.onDelete((_, row) =>
+      PubSub.publish(`${prefix}_deleted`, {
+        type: `${prefix}_deleted`,
+        entity: mapItem(row),
+      } as any)
+    );
+  }
+
   public async createBaseSubscriptions() {
     const now = Math.floor(Date.now() / 1000);
 
@@ -79,29 +141,29 @@ export class BitcraftService {
       `SELECT t.* from user_moderation_state t WHERE t.created_time > '${new Date().toISOString()}'`,
       `SELECT * from buy_order_state`,
       `SELECT * from sell_order_state`,
+      "SELECT * from building_state",
+      "SELECT * from progressive_action_state",
     ]);
 
-    // Listen for changes to item_desc
-    this.conn.db.itemDesc.onInsert((_, row) =>
-      PubSub.publish("bitcraft_item_added", {
-        type: "bitcraft_item_added",
-        item: mapItem(row),
-      })
+    this.registerEventHandlersFor(
+      "bitcraft_item",
+      this.conn.db.itemDesc,
+      mapItem
     );
-
-    this.conn.db.itemDesc.onUpdate((_, oldItem, newItem) =>
-      PubSub.publish("bitcraft_item_updated", {
-        type: "bitcraft_item_updated",
-        oldItem: mapItem(oldItem),
-        newItem: mapItem(newItem),
-      })
+    this.registerEventHandlersFor(
+      "bitcraft_recipe",
+      this.conn.db.craftingRecipeDesc,
+      mapRecipe
     );
-
-    this.conn.db.itemDesc.onDelete((_, row) =>
-      PubSub.publish("bitcraft_item_deleted", {
-        type: "bitcraft_item_deleted",
-        id: row.id,
-      })
+    this.registerEventHandlersFor(
+      "bitcraft_buy_order",
+      this.conn.db.buyOrderState,
+      mapAuctionListingState
+    );
+    this.registerEventHandlersFor(
+      "bitcraft_sell_order",
+      this.conn.db.sellOrderState,
+      mapAuctionListingState
     );
 
     // Publish its current state
@@ -111,84 +173,17 @@ export class BitcraftService {
       items: items.map(mapItem),
     });
 
-    // Listen for changes to crafting_recipe_desc
-    this.conn.db.craftingRecipeDesc.onInsert((_, recipe) =>
-      PubSub.publish("bitcraft_recipe_added", {
-        type: "bitcraft_recipe_added",
-        recipe: mapRecipe(recipe),
-      })
-    );
-
-    this.conn.db.craftingRecipeDesc.onUpdate((_, oldRecipe, newRecipe) =>
-      PubSub.publish("bitcraft_recipe_updated", {
-        type: "bitcraft_recipe_updated",
-        oldRecipe: mapRecipe(oldRecipe),
-        newRecipe: mapRecipe(newRecipe),
-      })
-    );
-
-    this.conn.db.craftingRecipeDesc.onDelete((_, recipe) =>
-      PubSub.publish("bitcraft_recipe_deleted", {
-        type: "bitcraft_recipe_deleted",
-        id: recipe.id,
-      })
-    );
-
     const recipes = [...this.conn.db.craftingRecipeDesc.iter()];
     PubSub.publish("bitcraft_recipes_init", {
       type: "bitcraft_recipes_init",
       recipes: recipes.map(mapRecipe),
     });
 
-    this.conn.db.buyOrderState.onInsert((_, order) =>
-      PubSub.publish("bitcraft_buy_order_added", {
-        type: "bitcraft_buy_order_added",
-        order: mapAuctionListingState(order),
-      })
-    );
-
-    this.conn.db.buyOrderState.onUpdate((_, oldOrder, newOrder) =>
-      PubSub.publish("bitcraft_buy_order_updated", {
-        type: "bitcraft_buy_order_updated",
-        oldOrder: mapAuctionListingState(oldOrder),
-        newOrder: mapAuctionListingState(newOrder),
-      })
-    );
-
-    this.conn.db.buyOrderState.onDelete((_, order) =>
-      PubSub.publish("bitcraft_buy_order_deleted", {
-        type: "bitcraft_buy_order_deleted",
-        order: mapAuctionListingState(order),
-      })
-    );
-
     const buyOrders = [...this.conn.db.buyOrderState.iter()];
     PubSub.publish("bitcraft_buy_orders_init", {
       type: "bitcraft_buy_orders_init",
       orders: buyOrders.map(mapAuctionListingState),
     });
-
-    this.conn.db.sellOrderState.onInsert((_, order) =>
-      PubSub.publish("bitcraft_sell_order_added", {
-        type: "bitcraft_sell_order_added",
-        order: mapAuctionListingState(order),
-      })
-    );
-
-    this.conn.db.sellOrderState.onUpdate((_, oldOrder, newOrder) =>
-      PubSub.publish("bitcraft_sell_order_updated", {
-        type: "bitcraft_sell_order_updated",
-        oldOrder: mapAuctionListingState(oldOrder),
-        newOrder: mapAuctionListingState(newOrder),
-      })
-    );
-
-    this.conn.db.sellOrderState.onDelete((_, order) =>
-      PubSub.publish("bitcraft_sell_order_deleted", {
-        type: "bitcraft_sell_order_deleted",
-        order: mapAuctionListingState(order),
-      })
-    );
 
     const sellOrders = [...this.conn.db.sellOrderState.iter()];
     PubSub.publish("bitcraft_sell_orders_init", {

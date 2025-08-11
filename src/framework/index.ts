@@ -20,7 +20,8 @@ import type {
   IBitcraftSellOrderUpdated,
   IBitcraftUserModeratedEvent,
 } from "./events";
-import { PubSubBuilder } from "./pubsub";
+import { PubSubBuilder, PubSub as PubSubClass } from "./pubsub";
+import type { EventHandler } from "@src/bitcraft/EventHandler";
 
 export const CommandBus = new CommandBusImpl();
 export const QueryBus = new CommandBusImpl();
@@ -100,4 +101,14 @@ const builder = new PubSubBuilder()
   >("bitcraft_sell_order_deleted");
 
 export const PubSub = builder.build();
+export type TPubSubEventNames = Parameters<typeof PubSub.publish>[0];
+export type TPubSubEventType<TKey extends string> =
+  typeof PubSub extends PubSubClass<infer TEvents>
+    ? TKey extends keyof TEvents
+      ? TEvents[TKey] extends EventHandler<infer TEvent>
+        ? TEvent
+        : never
+      : never
+    : never;
+
 registerApplicationSubscribers();

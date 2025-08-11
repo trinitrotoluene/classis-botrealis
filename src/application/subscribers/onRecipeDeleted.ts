@@ -3,9 +3,9 @@ import type { RecipesId } from "@src/database/__generated__/public/Recipes";
 import { type IBitcraftRecipeDeleted } from "@src/framework";
 
 export async function onRecipeDeleted(event: IBitcraftRecipeDeleted) {
-  const { id } = event;
+  const { entity } = event;
   await db
     .deleteFrom("recipes")
-    .where("id", "=", id.toString() as RecipesId)
+    .where("id", "=", entity.id.toString() as RecipesId)
     .executeTakeFirst();
 }

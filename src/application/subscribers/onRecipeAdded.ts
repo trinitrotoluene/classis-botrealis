@@ -3,7 +3,7 @@ import type { RecipesId } from "@src/database/__generated__/public/Recipes";
 import { type IBitcraftRecipeAdded } from "@src/framework";
 
 export async function onRecipeAdded(event: IBitcraftRecipeAdded) {
-  const { recipe } = event;
+  const { entity: recipe } = event;
   await db
     .insertInto("recipes")
     .values({

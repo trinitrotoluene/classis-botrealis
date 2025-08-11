@@ -55,18 +55,18 @@ export interface IBitcraftRecipesInit {
 
 export interface IBitcraftRecipeAdded {
   type: "bitcraft_recipe_added";
-  recipe: IBitcraftRecipe;
+  entity: IBitcraftRecipe;
 }
 
 export interface IBitcraftRecipeUpdated {
   type: "bitcraft_recipe_updated";
-  oldRecipe: IBitcraftRecipe;
-  newRecipe: IBitcraftRecipe;
+  oldEntity: IBitcraftRecipe;
+  newEntity: IBitcraftRecipe;
 }
 
 export interface IBitcraftRecipeDeleted {
   type: "bitcraft_recipe_deleted";
-  id: number;
+  entity: IBitcraftRecipe;
 }
 
 export interface IBitcraftItem {
@@ -86,6 +86,7 @@ export interface IBitcraftItem {
   itemListId: number;
   hasCompendiumEntry: boolean;
 }
+
 export interface IBitcraftItemsInit {
   type: "bitcraft_items_init";
   items: Array<IBitcraftItem>;
@@ -93,18 +94,18 @@ export interface IBitcraftItemsInit {
 
 export interface IBitcraftItemAdded {
   type: "bitcraft_item_added";
-  item: IBitcraftItem;
+  entity: IBitcraftItem;
 }
 
 export interface IBitcraftItemUpdated {
   type: "bitcraft_item_updated";
-  oldItem: IBitcraftItem;
-  newItem: IBitcraftItem;
+  oldEntity: IBitcraftItem;
+  newEntity: IBitcraftItem;
 }
 
 export interface IBitcraftItemDeleted {
   type: "bitcraft_item_deleted";
-  id: number;
+  entity: IBitcraftItem;
 }
 
 export interface IBitcraftAuctionOrder {
@@ -124,18 +125,18 @@ export interface IBitcraftBuyOrdersInit {
 
 export interface IBitcraftBuyOrderAdded {
   type: "bitcraft_buy_order_added";
-  order: IBitcraftAuctionOrder;
+  entity: IBitcraftAuctionOrder;
 }
 
 export interface IBitcraftBuyOrderUpdated {
   type: "bitcraft_buy_order_updated";
-  oldOrder: IBitcraftAuctionOrder;
-  newOrder: IBitcraftAuctionOrder;
+  oldEntity: IBitcraftAuctionOrder;
+  newEntity: IBitcraftAuctionOrder;
 }
 
 export interface IBitcraftBuyOrderDeleted {
   type: "bitcraft_buy_order_deleted";
-  order: IBitcraftAuctionOrder;
+  entity: IBitcraftAuctionOrder;
 }
 
 export interface IBitcraftSellOrdersInit {
@@ -145,16 +146,16 @@ export interface IBitcraftSellOrdersInit {
 
 export interface IBitcraftSellOrderAdded {
   type: "bitcraft_sell_order_added";
-  order: IBitcraftAuctionOrder;
+  entity: IBitcraftAuctionOrder;
 }
 
 export interface IBitcraftSellOrderUpdated {
   type: "bitcraft_sell_order_updated";
-  oldOrder: IBitcraftAuctionOrder;
-  newOrder: IBitcraftAuctionOrder;
+  oldEntity: IBitcraftAuctionOrder;
+  newEntity: IBitcraftAuctionOrder;
 }
 
 export interface IBitcraftSellOrderDeleted {
   type: "bitcraft_sell_order_deleted";
-  order: IBitcraftAuctionOrder;
+  entity: IBitcraftAuctionOrder;
 }

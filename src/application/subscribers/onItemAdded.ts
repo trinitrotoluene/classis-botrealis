@@ -3,7 +3,7 @@ import type { ItemsId } from "@src/database/__generated__/public/Items";
 import type { IBitcraftItemAdded } from "@src/framework";
 
 export async function onItemAdded(event: IBitcraftItemAdded) {
-  const { item } = event;
+  const { entity: item } = event;
 
   await db
     .insertInto("items")
