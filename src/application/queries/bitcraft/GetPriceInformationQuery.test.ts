@@ -121,13 +121,13 @@ describe("GetPriceInformationQuery", () => {
 
     expect(result).toEqual({
       buy: {
-        adjustedWeightedAveragePrice: 15.22,
-        highestPrice: 19,
+        adjustedWeightedAveragePrice: 12.57,
+        highestPrice: 18,
         lowestPrice: 10,
       },
       sell: {
-        adjustedWeightedAveragePrice: 20.16,
-        highestPrice: 24,
+        adjustedWeightedAveragePrice: 16.9,
+        highestPrice: 23,
         lowestPrice: 15,
       },
     });
@@ -164,8 +164,8 @@ describe("GetPriceInformationQuery", () => {
 
     expect(result).toEqual({
       buy: {
-        adjustedWeightedAveragePrice: 5.34,
-        highestPrice: 50,
+        adjustedWeightedAveragePrice: 4.92,
+        highestPrice: 20,
         lowestPrice: 1,
       },
       sell: undefined,

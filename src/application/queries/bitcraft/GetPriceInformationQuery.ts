@@ -39,20 +39,44 @@ function calculatePrices(orders: IBitcraftAuctionOrder[]) {
     return undefined;
   }
 
-  const median = computeMedianPrice(orders);
+  const { median, totalQuantity } = computeMedianPrice(orders);
   const mad = computeMAD(median, orders);
-  return processItems(median, mad, orders);
+  return processItems(median, mad, totalQuantity, orders);
 }
 
-function computeMedianPrice<TItem extends { price: number }>(
+function computeMedianPrice<TItem extends { price: number; quantity: number }>(
   items: Array<TItem>
 ) {
-  if (items.length % 2 === 1) {
-    return items[Math.floor(items.length / 2)].price;
+  let totalQuantity = 0;
+  for (const item of items) {
+    totalQuantity += item.quantity;
   }
 
-  const mid = items.length / 2;
-  return (items[mid - 1].price + items[mid].price) / 2;
+  const isEven = items.length % 2 === 0;
+  const lowerMidpoint = Math.floor((totalQuantity - 1) / 2);
+  const upperMidpoint = isEven ? lowerMidpoint + 1 : lowerMidpoint;
+
+  let accumulator = 0;
+  let lowerMedian: number | undefined;
+  let upperMedian: number | undefined;
+
+  for (const item of items) {
+    accumulator += item.quantity;
+
+    if (lowerMedian === undefined && accumulator > lowerMidpoint) {
+      lowerMedian = item.price;
+    }
+
+    if (upperMedian === undefined && accumulator > upperMidpoint) {
+      upperMedian = item.price;
+      break;
+    }
+  }
+
+  return {
+    totalQuantity,
+    median: ((lowerMedian ?? NaN) + (upperMedian ?? NaN)) / 2,
+  };
 }
 
 function computeMAD<TItem extends { price: number }>(
@@ -78,6 +102,7 @@ function computeMAD<TItem extends { price: number }>(
 function processItems<TItem extends { price: number; quantity: number }>(
   median: number,
   mad: number,
+  totalQuantity: number,
   items: Array<TItem>
 ) {
   const threshold = 2;
@@ -87,14 +112,12 @@ function processItems<TItem extends { price: number; quantity: number }>(
   const lowerLimit = median - adjustment;
 
   let totalOrderValue: number = 0;
-  let totalQuantity: number = 0;
   let highestPrice: number = NaN;
   let lowestPrice: number = NaN;
 
   for (const item of items) {
     if (item.price >= lowerLimit && item.price <= upperLimit) {
       totalOrderValue += item.price * item.quantity;
-      totalQuantity += item.quantity;
 
       highestPrice = isNaN(highestPrice)
         ? item.price
