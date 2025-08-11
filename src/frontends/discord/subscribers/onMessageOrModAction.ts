@@ -58,7 +58,7 @@ async function onBitcraftUserModerated(payload: IBitcraftUserModeratedEvent) {
     response.data.results.map((config) => {
       return sendWebhook(config, {
         username: "[SYSTEM]",
-        content: `User ${payload.targetId} has been moderated by ${payload.createdByEntityId} using policy ${payload.userModerationPolicy}.`,
+        content: `User ${payload.target.username ?? payload.target.id} had had policy ${payload.userModerationPolicy} applied until ${payload.expiresAt.toISOString()}.`,
       });
     })
   );

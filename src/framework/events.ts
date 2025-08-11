@@ -15,7 +15,10 @@ export interface IBitcraftChatMessageEvent {
 
 export interface IBitcraftUserModeratedEvent {
   type: "bitcraft_user_moderated";
-  targetId: string;
+  target: {
+    id: string;
+    username?: string;
+  };
   createdByEntityId: string;
   userModerationPolicy: string;
   createdAt: Date;

@@ -332,9 +332,14 @@ ON p.entity_id = s.entity_id
     _: EventContext,
     row: UserModerationState
   ) {
+    const targetUser = this.getUser(row.targetEntityId.toString());
+
     PubSub.publish("bitcraft_user_moderated", {
       type: "bitcraft_user_moderated",
-      targetId: row.targetEntityId.toString(),
+      target: {
+        id: row.targetEntityId.toString(),
+        username: targetUser?.username,
+      },
       createdByEntityId: row.createdByEntityId.toString(),
       userModerationPolicy: row.userModerationPolicy.tag,
       createdAt: row.createdTime.toDate(),
