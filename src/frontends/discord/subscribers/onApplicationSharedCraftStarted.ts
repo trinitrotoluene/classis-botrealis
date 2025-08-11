@@ -40,34 +40,28 @@ export async function onApplicationSharedCraftStarted(
     mapUrl = `https://bitcraftmap.com/#${encodedMapOptions}`;
   }
 
+  const formatProducedItem = (item: (typeof event.producedItems)[0]) =>
+    item ? `## **[T${item.tier}] ${item.name}**` : "n/a";
+
   const builder = new ContainerBuilder()
     .setAccentColor(0xd9427e)
     .addTextDisplayComponents((c) =>
-      c.setContent(`## Shared craft started\n-# ${event.id}`)
+      c.setContent(formatProducedItem(event.producedItems[0]))
     )
-    .addTextDisplayComponents(
-      (c) => c.setContent(`Total effort: ${event.progress}/${event.effort}`),
-      (c) => c.setContent(`Claim: ${event.claimName}`),
-      (c) => c.setContent(mapUrl ? `[bitcraftmap.com](${mapUrl})` : "n/a")
+    .addSeparatorComponents((s) => s)
+    .addTextDisplayComponents((c) =>
+      c.setContent(`\`\`\`
+Claim    : ${event.claimName}
+User     : ${event.user?.username ?? "n/a"}
+
+(${event.progress}/${event.effort})
+\`\`\`
+`)
     )
-    .addSeparatorComponents((s) => s);
-
-  const formatProducedItem = (item: (typeof event.producedItems)[0]) =>
-    `**[T${item.tier}] ${item.name}**`;
-
-  const items = event.producedItems;
-  for (let i = 0; i < items.length; i += 3) {
-    if (!items[i]) {
-      break;
-    }
-
-    builder.addTextDisplayComponents(
-      (c) => c.setContent(formatProducedItem(items[i]))
-      // (c) =>
-      //   items[i + 1] ? c.setContent(formatProducedItem(items[i + 1])) : c,
-      // (c) => (items[i + 2] ? c.setContent(formatProducedItem(items[i + 2])) : c)
+    .addSeparatorComponents((s) => s)
+    .addTextDisplayComponents((c) =>
+      c.setContent(mapUrl ? `[bitcraftmap.com](${mapUrl})` : "n/a")
     );
-  }
 
   const results = await Promise.allSettled(
     serversToNotify.data.results.map((x) => client.channels.fetch(x.threadId))

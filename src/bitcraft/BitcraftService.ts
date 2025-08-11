@@ -4,7 +4,7 @@ import type {
   ChatMessageState,
   DbConnection,
   EventContext,
-  ProgressiveActionState,
+  PublicProgressiveActionState,
   UserModerationState,
 } from "@src/bindings";
 import { logger } from "@src/logger";
@@ -49,16 +49,12 @@ function mapAuctionListingState(
   };
 }
 
-function mapProgressiveActionState(
-  action: ProgressiveActionState
+function mapPublicProgressiveActionState(
+  action: PublicProgressiveActionState
 ): IBitcraftProgressiveActionState {
   return {
     id: action.entityId.toString(),
     buildingEntityId: action.buildingEntityId.toString(),
-    functionType: action.functionType,
-    progress: action.progress,
-    recipeId: action.recipeId,
-    craftCount: action.craftCount,
     ownerEntityId: action.ownerEntityId.toString(),
   };
 }
@@ -171,8 +167,14 @@ export class BitcraftService {
       `SELECT * from buy_order_state`,
       `SELECT * from sell_order_state`,
       "SELECT * from building_state",
-      `SELECT s.* FROM progressive_action_state s WHERE s.craft_count > 50
-`,
+      `SELECT s.* FROM progressive_action_state s
+INNER JOIN public_progressive_action_state p
+  ON s.entity_id = p.entity_id
+WHERE s.craft_count > 50`,
+      `SELECT p.* FROM public_progressive_action_state p
+JOIN progressive_action_state s
+ON p.entity_id = s.entity_id
+  WHERE s.craft_count > 50`,
     ]);
 
     // Register bulk init handlers
@@ -224,8 +226,8 @@ export class BitcraftService {
 
     this.registerEventHandlersFor(
       "bitcraft_progressive_action",
-      this.conn.db.progressiveActionState,
-      mapProgressiveActionState,
+      this.conn.db.publicProgressiveActionState,
+      mapPublicProgressiveActionState,
       { exclude: { update: true } }
     );
 
@@ -288,6 +290,22 @@ export class BitcraftService {
     for (const building of this.conn.db.buildingState.iter()) {
       if (building.entityId.toString() === id) {
         return building;
+      }
+    }
+  }
+
+  public getProgressiveActionState(entityId: string) {
+    for (const action of this.conn.db.progressiveActionState.iter()) {
+      if (action.entityId.toString() === entityId) {
+        return action;
+      }
+    }
+  }
+
+  public getUser(entityId: string) {
+    for (const user of this.conn.db.playerUsernameState.iter()) {
+      if (user.entityId.toString() === entityId) {
+        return user;
       }
     }
   }

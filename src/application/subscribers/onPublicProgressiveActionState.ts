@@ -1,10 +1,8 @@
 import { BitcraftService } from "@src/bitcraft";
-import { ProgressiveActionStateCache } from "../services";
 import {
   PubSub,
   type IBitcraftProgressiveActionAdded,
   type IBitcraftProgressiveActionDeleted,
-  type IBitcraftProgressiveActionUpdated,
   type IBitcraftRecipe,
 } from "@src/framework";
 import { db } from "@src/database";
@@ -22,9 +20,16 @@ export async function onProgressiveActionStateAdded(
     return;
   }
 
-  AlreadySeenEventsId.add(event.entity.id);
+  const linkedState = BitcraftService.instance.getProgressiveActionState(
+    event.entity.id
+  );
 
-  ProgressiveActionStateCache.set(event.entity.id, event.entity);
+  if (!linkedState) {
+    logger.warn("Notified of a public craft but it is not present in cache");
+    return;
+  }
+
+  AlreadySeenEventsId.add(event.entity.id);
 
   const linkedBuilding = BitcraftService.instance.getBuildingState(
     event.entity.buildingEntityId
@@ -37,7 +42,7 @@ export async function onProgressiveActionStateAdded(
   const recipe = await db
     .selectFrom("recipes")
     .selectAll()
-    .where("id", "=", event.entity.recipeId.toString() as RecipesId)
+    .where("id", "=", linkedState.recipeId.toString() as RecipesId)
     .executeTakeFirst();
 
   if (!recipe) {
@@ -48,7 +53,7 @@ export async function onProgressiveActionStateAdded(
     return;
   }
 
-  const effort = (recipe.actions_required ?? 0) * event.entity.craftCount;
+  const effort = (recipe.actions_required ?? 0) * linkedState.craftCount;
 
   if (effort < 25_000) {
     logger.debug(
@@ -74,12 +79,19 @@ export async function onProgressiveActionStateAdded(
     event.entity.buildingEntityId
   );
 
+  const user = await BitcraftService.instance.getUser(
+    event.entity.ownerEntityId
+  );
+
   PubSub.publish("application_shared_craft_started", {
     type: "application_shared_craft_started",
     id: event.entity.id,
+    user: user
+      ? { id: user.entityId.toString(), username: user.username }
+      : undefined,
     claimName: claim?.name ?? "n/a",
     effort: effort,
-    progress: event.entity.progress,
+    progress: linkedState.progress,
     location: location
       ? {
           x: location.x,
@@ -97,16 +109,9 @@ export async function onProgressiveActionStateAdded(
   });
 }
 
-export function onProgressiveActionStateUpdated(
-  event: IBitcraftProgressiveActionUpdated
-) {
-  ProgressiveActionStateCache.set(event.newEntity.id, event.newEntity);
-}
-
-export function onProgressiveActionStateDeleted(
+export function onPublicProgressiveActionStateDeleted(
   event: IBitcraftProgressiveActionDeleted
 ) {
-  ProgressiveActionStateCache.delete(event.entity.id);
   PubSub.publish("application_shared_craft_removed", {
     type: "application_shared_craft_removed",
     id: event.entity.id,

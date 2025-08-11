@@ -164,10 +164,6 @@ export interface IBitcraftSellOrderDeleted {
 export interface IBitcraftProgressiveActionState {
   id: string;
   buildingEntityId: string;
-  functionType: number;
-  progress: number;
-  recipeId: number;
-  craftCount: number;
   ownerEntityId: string;
 }
 
@@ -193,6 +189,10 @@ export interface IApplicationSharedCraftStarted {
   claimName: string;
   effort: number;
   progress: number;
+  user?: {
+    id: string;
+    username: string;
+  };
   location?: {
     x: number;
     y: number;

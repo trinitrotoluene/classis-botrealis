@@ -73,7 +73,6 @@ export class BitcraftClient {
 
     return this.onConnectionError.publish({
       type: "connectionError",
-      context: ctx,
       err,
     });
   }

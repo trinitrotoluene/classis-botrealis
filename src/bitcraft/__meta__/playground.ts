@@ -12,16 +12,14 @@ const client = new BitcraftClient(
 );
 
 client.onConnected.subscribe(async ({ conn }) => {
-  await subscribeAsync(conn, [
-    "SELECT * from building_state",
-  ]);
+  await subscribeAsync(conn, ["SELECT * FROM player_username_state"]);
 
   logger.info("Dumping data");
   fs.mkdirSync(".bitcraft", { recursive: true });
 
   fs.writeFileSync(
-    ".bitcraft/buildingState.json",
-    jsonDump([...conn.db.buildingState.iter()])
+    ".bitcraft/playerUsernameState.json",
+    jsonDump([...conn.db.playerUsernameState.iter()])
   );
 
   logger.info("Done");
