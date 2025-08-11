@@ -4,6 +4,7 @@ import {
   SeparatorSpacingSize,
   SlashCommandBuilder,
   TextDisplayBuilder,
+  PermissionFlagsBits,
 } from "discord.js";
 import { CommandBus, QueryBus } from "@src/framework";
 import UpdateServerConfigCommand from "@src/application/commands/config/UpdateServerConfigCommand";
@@ -13,9 +14,12 @@ import SearchClaimsQuery from "@src/application/queries/bitcraft/SearchClaimsQue
 import GetClaimQuery from "@src/application/queries/bitcraft/GetClaimQuery";
 import CreateClaimSubscriptionCommand from "@src/application/commands/bitcraft/CreateClaimSubscriptionCommand";
 
+export const requiredPermissions = PermissionFlagsBits.Administrator;
+
 export const data = new SlashCommandBuilder()
   .setName("claim")
   .setDescription("Manage and interact your claim settings")
+  .setDefaultMemberPermissions(requiredPermissions)
   .addSubcommand((s) =>
     s
       .setName("configure")

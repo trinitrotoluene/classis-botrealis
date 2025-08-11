@@ -9,6 +9,7 @@ import { readdirSync } from "fs";
 import { join } from "path";
 
 interface ISlashCommandDefinition {
+  requiredPermissions: bigint;
   data: SlashCommandBuilder;
   execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
   autocomplete?: (interaction: AutocompleteInteraction) => Promise<void>;

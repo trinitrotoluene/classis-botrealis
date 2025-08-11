@@ -97,7 +97,35 @@ client.on(Events.InteractionCreate, async (interaction) => {
     return;
   }
 
+  if (
+    command.requiredPermissions &&
+    !interaction.memberPermissions?.has(command.requiredPermissions)
+  ) {
+    logger.warn(
+      {
+        requiredPermissions: command.requiredPermissions,
+        interactionPermissions: interaction.memberPermissions,
+      },
+      "command permissions out of sync"
+    );
+
+    return;
+  }
+
   try {
+    logger.info(
+      {
+        commandName: interaction.command?.name,
+        subCommand: interaction.options.getSubcommand(),
+        options: interaction.options.data,
+        guildId: interaction.guildId,
+        channelId: interaction.channelId,
+        userId: interaction.user?.id,
+        username: interaction.user?.username,
+      },
+      "executing slash command"
+    );
+
     await command.execute(interaction);
   } catch (error) {
     logger.error(

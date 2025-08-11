@@ -2,6 +2,7 @@ import {
   channelMention,
   ChannelType,
   MessageFlags,
+  PermissionFlagsBits,
   SlashCommandBuilder,
   TextChannel,
 } from "discord.js";
@@ -10,9 +11,12 @@ import { CommandBus, QueryBus } from "@src/framework";
 import UpdateServerConfigCommand from "@src/application/commands/config/UpdateServerConfigCommand";
 import GetServerConfigQuery from "@src/application/queries/config/GetServerConfigQuery";
 
+export const requiredPermissions = PermissionFlagsBits.ManageMessages;
+
 export const data = new SlashCommandBuilder()
   .setName("livechat")
   .setDescription("Manage the live chat settings for your server")
+  .setDefaultMemberPermissions(requiredPermissions)
   .addSubcommand((s) =>
     s
       .setName("configure")

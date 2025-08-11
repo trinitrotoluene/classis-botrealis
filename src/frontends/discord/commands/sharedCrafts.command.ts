@@ -1,6 +1,7 @@
 import {
   ChannelType,
   MessageFlags,
+  PermissionFlagsBits,
   SlashCommandBuilder,
   ThreadAutoArchiveDuration,
 } from "discord.js";
@@ -8,8 +9,11 @@ import { commandDefinition } from "./sdk/CommandBuilder";
 import { CommandBus } from "@src/framework";
 import UpdateServerConfigCommand from "@src/application/commands/config/UpdateServerConfigCommand";
 
+export const requiredPermissions = PermissionFlagsBits.ManageMessages;
+
 export const data = new SlashCommandBuilder()
   .setName("sharedcrafts")
+  .setDefaultMemberPermissions(requiredPermissions)
   .setDescription("Manage the shared crafting notifier for your server")
   .addSubcommand((s) =>
     s
