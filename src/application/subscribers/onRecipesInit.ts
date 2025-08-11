@@ -27,6 +27,7 @@ export async function onRecipesInit(event: IBitcraftRecipesInit) {
         consumed_item_stacks: JSON.stringify(recipe.consumedItemStacks),
         produced_item_stacks: JSON.stringify(recipe.producedItemStacks),
         is_passive: recipe.isPassive,
+        actions_required: recipe.actionsRequired,
       });
     }
 
@@ -44,6 +45,7 @@ export async function onRecipesInit(event: IBitcraftRecipesInit) {
           consumed_item_stacks: eb.ref("excluded.consumed_item_stacks"),
           produced_item_stacks: eb.ref("excluded.produced_item_stacks"),
           is_passive: eb.ref("excluded.is_passive"),
+          actions_required: eb.ref("excluded.actions_required"),
         }))
       )
       .execute();

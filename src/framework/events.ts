@@ -46,6 +46,7 @@ export interface IBitcraftRecipe {
     quantity: number;
   }>;
   isPassive: boolean;
+  actionsRequired: number;
 }
 
 export interface IBitcraftRecipesInit {
@@ -158,4 +159,54 @@ export interface IBitcraftSellOrderUpdated {
 export interface IBitcraftSellOrderDeleted {
   type: "bitcraft_sell_order_deleted";
   entity: IBitcraftAuctionOrder;
+}
+
+export interface IBitcraftProgressiveActionState {
+  id: string;
+  buildingEntityId: string;
+  functionType: number;
+  progress: number;
+  recipeId: number;
+  craftCount: number;
+  ownerEntityId: string;
+}
+
+export interface IBitcraftProgressiveActionAdded {
+  type: "bitcraft_progressive_action_added";
+  entity: IBitcraftProgressiveActionState;
+}
+
+export interface IBitcraftProgressiveActionUpdated {
+  type: "bitcraft_progressive_action_updated";
+  oldEntity: IBitcraftProgressiveActionState;
+  newEntity: IBitcraftProgressiveActionState;
+}
+
+export interface IBitcraftProgressiveActionDeleted {
+  type: "bitcraft_progressive_action_deleted";
+  entity: IBitcraftProgressiveActionState;
+}
+
+export interface IApplicationSharedCraftStarted {
+  type: "application_shared_craft_started";
+  id: string;
+  claimName: string;
+  effort: number;
+  progress: number;
+  location?: {
+    x: number;
+    y: number;
+    chunkIndex: string;
+  };
+  producedItems: Array<{
+    id: string;
+    name: string;
+    description: string;
+    tier: number;
+    rarity: string;
+  }>;
+}
+export interface IApplicationSharedCraftRemoved {
+  type: "application_shared_craft_removed";
+  id: string;
 }

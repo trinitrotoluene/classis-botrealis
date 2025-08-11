@@ -44,6 +44,26 @@ describe("UpdateServerConfigCommand", () => {
     ]);
   });
 
+  it("updates shared_craft_thread_id when re-run with a provided thread ID for a server with no existing config", async () => {
+    const command = new UpdateServerConfigCommand({
+      serverId: "cool-server-id",
+      sharedCraftThreadId: "cool-thread-id",
+    });
+
+    await command.execute();
+    const serverConfigs = await db
+      .selectFrom("server_config")
+      .selectAll()
+      .execute();
+
+    expect(serverConfigs).toEqual([
+      expect.objectContaining({
+        id: "cool-server-id",
+        shared_craft_thread_id: "cool-thread-id",
+      }),
+    ]);
+  });
+
   it.each([
     ["live_region_chat_webhook_id", "liveRegionChatWebhookId"],
     ["live_region_chat_webhook_token", "liveRegionChatWebhookToken"],
@@ -109,6 +129,34 @@ describe("UpdateServerConfigCommand", () => {
       expect.objectContaining({
         id: "cool-server-id",
         linked_claim_id: "new-claim-id",
+      }),
+    ]);
+  });
+
+  it("updates shared_craft_thread_id when re-run with a provided thread ID for a server with existing config", async () => {
+    await db
+      .insertInto("server_config")
+      .values({
+        id: "cool-server-id" as ServerConfigId,
+        shared_craft_thread_id: "old-thread-id",
+      })
+      .execute();
+
+    const command = new UpdateServerConfigCommand({
+      serverId: "cool-server-id",
+      sharedCraftThreadId: "new-thread-id",
+    });
+    await command.execute();
+
+    const serverConfigs = await db
+      .selectFrom("server_config")
+      .selectAll()
+      .execute();
+
+    expect(serverConfigs).toEqual([
+      expect.objectContaining({
+        id: "cool-server-id",
+        shared_craft_thread_id: "new-thread-id",
       }),
     ]);
   });

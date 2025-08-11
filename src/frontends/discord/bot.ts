@@ -7,6 +7,8 @@ import { CommandBus, PubSub } from "@src/framework";
 import InitialiseBitcraftServiceCommand from "@src/application/commands/bitcraft/InitialiseBitcraftServiceCommand";
 import CreateClaimSubscriptionCommand from "@src/application/commands/bitcraft/CreateClaimSubscriptionCommand";
 import { onMessageOrModAction } from "./subscribers/onMessageOrModAction";
+import { onApplicationSharedCraftRemoved } from "./subscribers/onApplicationSharedCraftRemoved";
+import { onApplicationSharedCraftStarted } from "./subscribers/onApplicationSharedCraftStarted";
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds],
@@ -32,6 +34,12 @@ client.on(Events.ClientReady, async (client) => {
 
   PubSub.subscribe("bitcraft_chat_message", onMessageOrModAction);
   PubSub.subscribe("bitcraft_user_moderated", onMessageOrModAction);
+  PubSub.subscribe("application_shared_craft_started", (e) =>
+    onApplicationSharedCraftStarted(client, e)
+  );
+  PubSub.subscribe("application_shared_craft_removed", (e) =>
+    onApplicationSharedCraftRemoved(client, e)
+  );
 });
 
 client.on(Events.GuildAvailable, (guild) => {

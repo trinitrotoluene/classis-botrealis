@@ -20,6 +20,8 @@ export default interface ServerConfigTable {
   live_local_chat_webhook_id: ColumnType<string | null, string | null, string | null>;
 
   live_local_chat_webhook_token: ColumnType<string | null, string | null, string | null>;
+
+  shared_craft_thread_id: ColumnType<string | null, string | null, string | null>;
 }
 
 export type ServerConfig = Selectable<ServerConfigTable>;

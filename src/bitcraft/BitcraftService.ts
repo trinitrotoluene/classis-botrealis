@@ -4,6 +4,7 @@ import type {
   ChatMessageState,
   DbConnection,
   EventContext,
+  ProgressiveActionState,
   UserModerationState,
 } from "@src/bindings";
 import { logger } from "@src/logger";
@@ -13,6 +14,7 @@ import { subscribeAsync } from "./subscribeAsync";
 import {
   PubSub,
   type IBitcraftAuctionOrder,
+  type IBitcraftProgressiveActionState,
   type TPubSubEventNames,
   type TPubSubEventType,
 } from "@src/framework";
@@ -47,15 +49,30 @@ function mapAuctionListingState(
   };
 }
 
+function mapProgressiveActionState(
+  action: ProgressiveActionState
+): IBitcraftProgressiveActionState {
+  return {
+    id: action.entityId.toString(),
+    buildingEntityId: action.buildingEntityId.toString(),
+    functionType: action.functionType,
+    progress: action.progress,
+    recipeId: action.recipeId,
+    craftCount: action.craftCount,
+    ownerEntityId: action.ownerEntityId.toString(),
+  };
+}
+
 export class BitcraftService {
+  private readonly subscribedClaims: Set<string>;
+
   constructor(
     private readonly client: BitcraftClient,
     private readonly conn: DbConnection
   ) {
-    conn.db.chatMessageState.onInsert(this.handleChatMessageStateInsert);
-    conn.db.userModerationState.onInsert(this.handleUserModerationStateInsert);
+    this.subscribedClaims = new Set();
   }
-  
+
   static instance: BitcraftService = undefined as any;
 
   static start(): Promise<BitcraftService> {
@@ -72,9 +89,12 @@ export class BitcraftService {
     );
 
     const promise = new Promise<BitcraftService>((resolve, reject) => {
-      client.onConnected.subscribe((x) => {
+      client.onConnected.subscribe(async (x) => {
         const service = new BitcraftService(client, x.conn);
         BitcraftService.instance = service;
+
+        await service.createBaseSubscriptions();
+
         resolve(service);
       });
 
@@ -103,29 +123,38 @@ export class BitcraftService {
       entity: infer TMappedEntity;
     }
       ? TMappedEntity
-      : never
+      : never,
+    config?: {
+      exclude: { insert?: boolean; update?: boolean; delete?: boolean };
+    }
   ) {
-    table.onInsert((_, row) =>
-      PubSub.publish(`${prefix}_added`, {
-        type: `${prefix}_added`,
-        entity: mapper(row),
-      } as any)
-    );
+    if (!config || !config.exclude.insert) {
+      table.onInsert((_, row) =>
+        PubSub.publish(`${prefix}_added`, {
+          type: `${prefix}_added`,
+          entity: mapper(row),
+        } as any)
+      );
+    }
 
-    table.onUpdate((_, oldItem, newItem) =>
-      PubSub.publish(`${prefix}_updated`, {
-        type: `${prefix}_updated`,
-        oldEntity: mapItem(oldItem),
-        newEntity: mapItem(newItem),
-      } as any)
-    );
+    if (!config || !config.exclude.update) {
+      table.onUpdate((_, oldItem, newItem) =>
+        PubSub.publish(`${prefix}_updated`, {
+          type: `${prefix}_updated`,
+          oldEntity: mapper(oldItem),
+          newEntity: mapper(newItem),
+        } as any)
+      );
+    }
 
-    table.onDelete((_, row) =>
-      PubSub.publish(`${prefix}_deleted`, {
-        type: `${prefix}_deleted`,
-        entity: mapItem(row),
-      } as any)
-    );
+    if (!config || !config.exclude.delete) {
+      table.onDelete((_, row) =>
+        PubSub.publish(`${prefix}_deleted`, {
+          type: `${prefix}_deleted`,
+          entity: mapper(row),
+        } as any)
+      );
+    }
   }
 
   public async createBaseSubscriptions() {
@@ -142,31 +171,11 @@ export class BitcraftService {
       `SELECT * from buy_order_state`,
       `SELECT * from sell_order_state`,
       "SELECT * from building_state",
-      "SELECT * from progressive_action_state",
+      `SELECT s.* FROM progressive_action_state s WHERE s.craft_count > 50
+`,
     ]);
 
-    this.registerEventHandlersFor(
-      "bitcraft_item",
-      this.conn.db.itemDesc,
-      mapItem
-    );
-    this.registerEventHandlersFor(
-      "bitcraft_recipe",
-      this.conn.db.craftingRecipeDesc,
-      mapRecipe
-    );
-    this.registerEventHandlersFor(
-      "bitcraft_buy_order",
-      this.conn.db.buyOrderState,
-      mapAuctionListingState
-    );
-    this.registerEventHandlersFor(
-      "bitcraft_sell_order",
-      this.conn.db.sellOrderState,
-      mapAuctionListingState
-    );
-
-    // Publish its current state
+    // Register bulk init handlers
     const items = [...this.conn.db.itemDesc.iter()];
     PubSub.publish("bitcraft_items_init", {
       type: "bitcraft_items_init",
@@ -190,6 +199,41 @@ export class BitcraftService {
       type: "bitcraft_sell_orders_init",
       orders: sellOrders.map(mapAuctionListingState),
     });
+
+    // Register CRUD handlers
+    this.registerEventHandlersFor(
+      "bitcraft_item",
+      this.conn.db.itemDesc,
+      mapItem
+    );
+    this.registerEventHandlersFor(
+      "bitcraft_recipe",
+      this.conn.db.craftingRecipeDesc,
+      mapRecipe
+    );
+    this.registerEventHandlersFor(
+      "bitcraft_buy_order",
+      this.conn.db.buyOrderState,
+      mapAuctionListingState
+    );
+    this.registerEventHandlersFor(
+      "bitcraft_sell_order",
+      this.conn.db.sellOrderState,
+      mapAuctionListingState
+    );
+
+    this.registerEventHandlersFor(
+      "bitcraft_progressive_action",
+      this.conn.db.progressiveActionState,
+      mapProgressiveActionState,
+      { exclude: { update: true } }
+    );
+
+    // Ad-hoc stuff
+    this.conn.db.chatMessageState.onInsert(this.handleChatMessageStateInsert);
+    this.conn.db.userModerationState.onInsert(
+      this.handleUserModerationStateInsert
+    );
   }
 
   public async createClaimSubscription(claimId: string) {
@@ -208,6 +252,23 @@ export class BitcraftService {
     );
   }
 
+  public async oneOffLocationSubscription(entityId: string) {
+    const { unsubscribe } = await subscribeAsync(
+      this.conn,
+      `SELECT * from location_state WHERE entity_id = '${entityId}'`
+    );
+
+    try {
+      for (const location of this.conn.db.locationState.iter()) {
+        if (location.entityId.toString() === entityId) {
+          return location;
+        }
+      }
+    } finally {
+      unsubscribe();
+    }
+  }
+
   public searchClaims(searchTerm: string, limit = 10) {
     const claims = [...this.conn.db.claimState.iter()];
     return claims
@@ -216,8 +277,19 @@ export class BitcraftService {
   }
 
   public getClaim(id: string) {
-    const claims = [...this.conn.db.claimState.iter()];
-    return claims.find((x) => x.entityId.toString() === id);
+    for (const claim of this.conn.db.claimState.iter()) {
+      if (claim.entityId.toString() === id) {
+        return claim;
+      }
+    }
+  }
+
+  public getBuildingState(id: string) {
+    for (const building of this.conn.db.buildingState.iter()) {
+      if (building.entityId.toString() === id) {
+        return building;
+      }
+    }
   }
 
   public searchItems(searchTerm: string, limit = 10) {

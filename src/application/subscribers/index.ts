@@ -15,6 +15,11 @@ import { onSellOrdersInit } from "./onSellOrdersInit";
 import { onSellOrderAdded } from "./onSellOrderAdded";
 import { onSellOrderUpdated } from "./onSellOrderUpdated";
 import { onSellOrderDeleted } from "./onSellOrderDeleted";
+import {
+  onProgressiveActionStateAdded,
+  onProgressiveActionStateDeleted,
+  onProgressiveActionStateUpdated,
+} from "./onProgressiveActionState";
 
 export function registerApplicationSubscribers() {
   PubSub.subscribe("bitcraft_recipes_init", onRecipesInit);
@@ -36,4 +41,17 @@ export function registerApplicationSubscribers() {
   PubSub.subscribe("bitcraft_sell_order_added", onSellOrderAdded);
   PubSub.subscribe("bitcraft_sell_order_updated", onSellOrderUpdated);
   PubSub.subscribe("bitcraft_sell_order_deleted", onSellOrderDeleted);
+
+  PubSub.subscribe(
+    "bitcraft_progressive_action_added",
+    onProgressiveActionStateAdded
+  );
+  PubSub.subscribe(
+    "bitcraft_progressive_action_updated",
+    onProgressiveActionStateUpdated
+  );
+  PubSub.subscribe(
+    "bitcraft_progressive_action_deleted",
+    onProgressiveActionStateDeleted
+  );
 }

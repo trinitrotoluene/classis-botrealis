@@ -26,5 +26,6 @@ export function mapRecipe(item: CraftingRecipeDesc): IBitcraftRecipe {
       quantity: x.quantity,
     })),
     isPassive: item.isPassive,
+    actionsRequired: item.actionsRequired,
   };
 }

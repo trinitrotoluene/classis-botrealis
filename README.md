@@ -1,6 +1,8 @@
 # Classis Botrealis
 
-[![Add To Your Server](https://img.shields.io/badge/Add%20to%20Your%20Server-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/oauth2/authorize?client_id=1396088730938245151&permissions=311922002944&scope=bot%20applications.commands)
+![Deploy Status](https://img.shields.io/github/actions/workflow/status/trinitrotoluene/classis-botrealis/deploy.yml?branch=master&style=flat-square) [![Add To Your Server](https://img.shields.io/badge/Add%20to%20Your%20Server-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.com/oauth2/authorize?client_id=1396088730938245151&permissions=311922002944&scope=bot%20applications.commands)
+
+[![Join The Discord Server](https://img.shields.io/badge/Join%20the%20Discord%20server-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.gg/NKddr87kcJ)
 
 Welcome to the Classis Botrealis codebase. This bot is mainly a collection of experimental features hacked on top of the Bitcraft SpacetimeDB backend.
 

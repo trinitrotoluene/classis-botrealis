@@ -22,6 +22,8 @@ export default interface RecipesTable {
   produced_item_stacks: ColumnType<unknown, unknown, unknown>;
 
   is_passive: ColumnType<boolean, boolean | undefined, boolean>;
+
+  actions_required: ColumnType<number | null, number | null, number | null>;
 }
 
 export type Recipes = Selectable<RecipesTable>;

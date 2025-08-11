@@ -16,6 +16,7 @@ interface Args {
     liveLocalChatWebhookId?: string | null;
     liveLocalChatWebhookToken?: string | null;
   };
+  sharedCraftThreadId?: string | null;
 }
 
 export default class UpdateServerConfigCommand extends CommandBase<Args, void> {
@@ -63,6 +64,10 @@ export default class UpdateServerConfigCommand extends CommandBase<Args, void> {
       if (liveLocalChatWebhookToken !== undefined) {
         newConfig.live_local_chat_webhook_token = liveLocalChatWebhookToken;
       }
+    }
+
+    if (this.args.sharedCraftThreadId !== undefined) {
+      newConfig.shared_craft_thread_id = this.args.sharedCraftThreadId;
     }
 
     await db
