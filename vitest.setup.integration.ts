@@ -5,6 +5,7 @@ import { Client } from "pg";
 import { config } from "dotenv";
 import { resolve } from "path";
 import { Config } from "./src/config";
+import { readFileSync } from "fs";
 
 let client: Client;
 
@@ -44,6 +45,14 @@ beforeAll(async () => {
   // Simply importing this file causes the migrations to run.
   // We cannot pre-import it because obviously there's nothing to migrate before this point.
   await import("./src/database/__meta__/migrateToLatest");
+
+  console.log("Reading test data files");
+  const recipes = readFileSync("./integration/test-data/recipes.sql", "utf-8");
+  const items = readFileSync("./integration/test-data/items.sql", "utf-8");
+
+  console.log("Executing test data queries");
+  await client.query(items);
+  await client.query(recipes);
 }, 60_000);
 
 afterAll(async () => {
