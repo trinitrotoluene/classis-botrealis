@@ -39,13 +39,13 @@ await client.connect();
 
 (globalThis as Record<string, unknown>).pgClient = client;
 
+const { configureDb, setupEnumArrayParsers } = await import("./src/database");
+await configureDb();
 // Simply importing this file causes the migrations to run.
 // We cannot pre-import it because obviously there's nothing to migrate before this point.
 await import("./src/database/__meta__/migrateToLatest");
-// For some reason it keeps importing db before the migrations run
-// so explicitly set up the parsers AFTER the migrations run here.
-const { setupEnumArrayParsers, pool } = await import("./src/database/pool");
-await setupEnumArrayParsers(pool);
+// Run this AFTER the db has been migrated so the enum types exist
+await setupEnumArrayParsers();
 
 console.log("Reading test data files");
 const recipes = readFileSync("./integration/test-data/recipes.sql", "utf-8");

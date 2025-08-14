@@ -1,2 +1,1 @@
-export { db } from "./db";
-// export { migrator } from "./migrate";
+export { db, configureDb, setupEnumArrayParsers } from "./db";
