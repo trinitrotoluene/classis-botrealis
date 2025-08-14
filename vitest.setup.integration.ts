@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { GenericContainer, Wait } from "testcontainers";
-import { beforeEach, beforeAll, afterAll } from "vitest";
+import { beforeEach, afterAll } from "vitest";
 import { Client } from "pg";
 import { config } from "dotenv";
 import { resolve } from "path";
 import { Config } from "./src/config";
 import { readFileSync } from "fs";
-
-let client: Client;
 
 // Load integration test specific environment variables
 const envPath = resolve(__dirname, "./.env.integrationtests");
@@ -34,26 +32,28 @@ const host = container.getHost();
 (process.env as any).OVERRIDE_PG_PORT = port;
 (process.env as any).OVERRIDE_PG_HOST = host;
 
-beforeAll(async () => {
-  client = new Client({
-    connectionString: `postgres://${Config.postgres.user}:${Config.postgres.password}@${host}:${port}/${Config.postgres.database}`,
-  });
-  await client.connect();
+const client = new Client({
+  connectionString: `postgres://${Config.postgres.user}:${Config.postgres.password}@${host}:${port}/${Config.postgres.database}`,
+});
+await client.connect();
 
-  (globalThis as Record<string, unknown>).pgClient = client;
+(globalThis as Record<string, unknown>).pgClient = client;
 
-  // Simply importing this file causes the migrations to run.
-  // We cannot pre-import it because obviously there's nothing to migrate before this point.
-  await import("./src/database/__meta__/migrateToLatest");
+// Simply importing this file causes the migrations to run.
+// We cannot pre-import it because obviously there's nothing to migrate before this point.
+await import("./src/database/__meta__/migrateToLatest");
+// For some reason it keeps importing db before the migrations run
+// so explicitly set up the parsers AFTER the migrations run here.
+const { setupEnumArrayParsers, pool } = await import("./src/database/pool");
+await setupEnumArrayParsers(pool);
 
-  console.log("Reading test data files");
-  const recipes = readFileSync("./integration/test-data/recipes.sql", "utf-8");
-  const items = readFileSync("./integration/test-data/items.sql", "utf-8");
+console.log("Reading test data files");
+const recipes = readFileSync("./integration/test-data/recipes.sql", "utf-8");
+const items = readFileSync("./integration/test-data/items.sql", "utf-8");
 
-  console.log("Executing test data queries");
-  await client.query(items);
-  await client.query(recipes);
-}, 60_000);
+console.log("Executing test data queries");
+await client.query(items);
+await client.query(recipes);
 
 afterAll(async () => {
   console.log("Closing PostgreSQL client...");

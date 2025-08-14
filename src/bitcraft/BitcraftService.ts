@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
-  AuctionListingState,
   ChatMessageState,
   DbConnection,
   EventContext,
-  PublicProgressiveActionState,
   UserModerationState,
 } from "@src/bindings";
 import { logger } from "@src/logger";
@@ -13,14 +11,15 @@ import { Config } from "@src/config";
 import { subscribeAsync } from "./subscribeAsync";
 import {
   PubSub,
-  type IBitcraftAuctionOrder,
-  type IBitcraftProgressiveActionState,
   type TPubSubEventNames,
   type TPubSubEventType,
 } from "@src/framework";
 import { mapRecipe } from "./mapRecipe";
 import { mapItem } from "./mapItem";
 import type { TableCache } from "@clockworklabs/spacetimedb-sdk";
+import { mapPublicProgressiveActionState } from "./mapPublicProgressiveActionState";
+import { mapAuctionListingState } from "./mapAuctionListingState";
+import { mapEmpireState } from "./mapEmpireState";
 
 type ValidPrefixes<T extends string> = T extends
   | `${infer Prefix}_added`
@@ -34,30 +33,6 @@ type ExtractRowType<TTable> = TTable extends {
 }
   ? TRowType
   : never;
-
-function mapAuctionListingState(
-  order: AuctionListingState
-): IBitcraftAuctionOrder {
-  return {
-    id: order.entityId.toString(),
-    ownerId: order.ownerEntityId.toString(),
-    claimId: order.claimEntityId.toString(),
-    price: order.priceThreshold,
-    quantity: order.quantity,
-    storedCoins: order.storedCoins,
-    itemId: order.itemId,
-  };
-}
-
-function mapPublicProgressiveActionState(
-  action: PublicProgressiveActionState
-): IBitcraftProgressiveActionState {
-  return {
-    id: action.entityId.toString(),
-    buildingEntityId: action.buildingEntityId.toString(),
-    ownerEntityId: action.ownerEntityId.toString(),
-  };
-}
 
 export class BitcraftService {
   private readonly subscribedClaims: Set<string>;
@@ -159,6 +134,8 @@ export class BitcraftService {
     await subscribeAsync(this.conn, [
       "SELECT * from item_desc",
       "SELECT * from crafting_recipe_desc",
+      "SELECT * from item_list_desc",
+      "SELECT * from empire_state",
       "SELECT * from building_desc",
       "SELECT t.* from claim_state t WHERE t.neutral = FALSE",
       "SELECT * from player_username_state",
@@ -202,6 +179,12 @@ ON p.entity_id = s.entity_id
       orders: sellOrders.map(mapAuctionListingState),
     });
 
+    const empires = [...this.conn.db.empireState.iter()];
+    PubSub.publish("bitcraft_empires_init", {
+      type: "bitcraft_empires_init",
+      empires: empires.map(mapEmpireState),
+    });
+
     // Register CRUD handlers
     this.registerEventHandlersFor(
       "bitcraft_item",
@@ -229,6 +212,12 @@ ON p.entity_id = s.entity_id
       this.conn.db.publicProgressiveActionState,
       mapPublicProgressiveActionState,
       { exclude: { update: true } }
+    );
+
+    this.registerEventHandlersFor(
+      "bitcraft_empire",
+      this.conn.db.empireState,
+      mapEmpireState
     );
 
     // Ad-hoc stuff
@@ -313,6 +302,12 @@ ON p.entity_id = s.entity_id
   public searchItems(searchTerm: string, limit = 10) {
     const itemDesc = [...this.conn.db.itemDesc.iter()];
     return itemDesc
+      .filter((x) => x.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      .slice(0, limit);
+  }
+
+  public getEmpires(searchTerm: string, limit = 25) {
+    return [...this.conn.db.empireState.iter()]
       .filter((x) => x.name.toLowerCase().includes(searchTerm.toLowerCase()))
       .slice(0, limit);
   }

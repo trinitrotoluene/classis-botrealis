@@ -1,3 +1,4 @@
+import type { default as ServerFeature } from './ServerFeature';
 import type { ColumnType, Selectable, Insertable, Updateable } from 'kysely';
 
 /** Identifier type for public.server_config */
@@ -22,6 +23,12 @@ export default interface ServerConfigTable {
   live_local_chat_webhook_token: ColumnType<string | null, string | null, string | null>;
 
   shared_craft_thread_id: ColumnType<string | null, string | null, string | null>;
+
+  features_enabled: ColumnType<ServerFeature[] | null, ServerFeature[] | null, ServerFeature[] | null>;
+
+  observing_empire_ids: ColumnType<string[] | null, string[] | null, string[] | null>;
+
+  observing_empire_logs_thread_id: ColumnType<string | null, string | null, string | null>;
 }
 
 export type ServerConfig = Selectable<ServerConfigTable>;

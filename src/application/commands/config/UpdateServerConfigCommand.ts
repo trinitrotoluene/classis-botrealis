@@ -3,6 +3,7 @@ import type {
   NewServerConfig,
   ServerConfigId,
 } from "@src/database/__generated__/public/ServerConfig";
+import type ServerFeature from "@src/database/__generated__/public/ServerFeature";
 import { CommandBase } from "@src/framework";
 
 interface Args {
@@ -17,11 +18,23 @@ interface Args {
     liveLocalChatWebhookToken?: string | null;
   };
   sharedCraftThreadId?: string | null;
+  observingEmpireLogsThreadId?: string | null;
+  addFeatures?: Array<ServerFeature>;
+  removeFeatures?: Array<ServerFeature>;
+  addObservedEmpires?: Array<string>;
+  removeObservedEmpires?: Array<string>;
 }
 
 export default class UpdateServerConfigCommand extends CommandBase<Args, void> {
   async execute() {
     const id = this.args.serverId as ServerConfigId;
+
+    const existing = await db
+      .selectFrom("server_config")
+      .select("features_enabled")
+      .select("observing_empire_ids")
+      .where("id", "=", this.args.serverId as ServerConfigId)
+      .executeTakeFirst();
 
     const newConfig: NewServerConfig = {
       id,
@@ -68,6 +81,40 @@ export default class UpdateServerConfigCommand extends CommandBase<Args, void> {
 
     if (this.args.sharedCraftThreadId !== undefined) {
       newConfig.shared_craft_thread_id = this.args.sharedCraftThreadId;
+    }
+
+    if (this.args.observingEmpireLogsThreadId !== undefined) {
+      newConfig.observing_empire_logs_thread_id =
+        this.args.observingEmpireLogsThreadId;
+    }
+
+    if (this.args.addFeatures || this.args.removeFeatures) {
+      const currentFeatures = new Set<ServerFeature>(
+        existing?.features_enabled ?? []
+      );
+
+      for (const featureToRemove of this.args.removeFeatures ?? []) {
+        currentFeatures.delete(featureToRemove);
+      }
+
+      for (const featureToAdd of this.args.addFeatures ?? []) {
+        currentFeatures.add(featureToAdd);
+      }
+
+      newConfig.features_enabled = currentFeatures.values().toArray();
+    }
+
+    if (this.args.addObservedEmpires || this.args.removeObservedEmpires) {
+      const currentIds = new Set(existing?.observing_empire_ids ?? []);
+      for (const id of this.args.removeObservedEmpires ?? []) {
+        currentIds.delete(id);
+      }
+
+      for (const id of this.args.addObservedEmpires ?? []) {
+        currentIds.add(id);
+      }
+
+      newConfig.observing_empire_ids = currentIds.values().toArray();
     }
 
     await db

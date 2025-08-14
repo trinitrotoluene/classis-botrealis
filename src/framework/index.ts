@@ -1,6 +1,7 @@
 import { registerApplicationSubscribers } from "@src/application/subscribers";
 import { CommandBusImpl } from "./bus";
 import type {
+  IApplicationEmpireTreasuryUpdated as IApplicationEmpireTreasuryChanged,
   IApplicationSharedCraftRemoved,
   IApplicationSharedCraftStarted,
   IBitcraftBuyOrderAdded,
@@ -8,6 +9,10 @@ import type {
   IBitcraftBuyOrdersInit,
   IBitcraftBuyOrderUpdated,
   IBitcraftChatMessageEvent,
+  IBitcraftEmpireAdded,
+  IBitcraftEmpireDeleted,
+  IBitcraftEmpiresInit,
+  IBitcraftEmpireUpdated,
   IBitcraftItemAdded,
   IBitcraftItemDeleted,
   IBitcraftItemsInit,
@@ -123,7 +128,27 @@ const builder = new PubSubBuilder()
   .withEvent<
     "application_shared_craft_removed",
     IApplicationSharedCraftRemoved
-  >("application_shared_craft_removed");
+  >("application_shared_craft_removed")
+  .withEvent<
+    "bitcraft_empires_init",
+    IBitcraftEmpiresInit
+  >("bitcraft_empires_init")
+  .withEvent<
+    "bitcraft_empire_added",
+    IBitcraftEmpireAdded
+  >("bitcraft_empire_added")
+  .withEvent<
+    "bitcraft_empire_updated",
+    IBitcraftEmpireUpdated
+  >("bitcraft_empire_updated")
+  .withEvent<
+    "bitcraft_empire_deleted",
+    IBitcraftEmpireDeleted
+  >("bitcraft_empire_deleted")
+  .withEvent<
+    "application_empire_treasury_changed",
+    IApplicationEmpireTreasuryChanged
+  >("application_empire_treasury_changed");
 
 export const PubSub = builder.build();
 export type TPubSubEventNames = Parameters<typeof PubSub.publish>[0];

@@ -1,3 +1,4 @@
+import type ServerFeature from "@src/database/__generated__/public/ServerFeature";
 import { logger } from "@src/logger";
 import {
   AutocompleteInteraction,
@@ -9,7 +10,9 @@ import { readdirSync } from "fs";
 import { join } from "path";
 
 interface ISlashCommandDefinition {
-  requiredPermissions: bigint;
+  requiredPermissions?: bigint;
+  isAdminGuildOnly?: boolean;
+  requiredFeatures?: ServerFeature[];
   data: SlashCommandBuilder;
   execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
   autocomplete?: (interaction: AutocompleteInteraction) => Promise<void>;

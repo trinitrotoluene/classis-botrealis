@@ -1,7 +1,8 @@
 import { FileMigrationProvider, Migrator } from "kysely";
-import { db } from ".";
+import { db } from "./db";
 import path from "path";
 
+console.trace("running migrations");
 export const migrator = new Migrator({
   db: db,
   provider: new FileMigrationProvider({

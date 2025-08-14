@@ -213,3 +213,40 @@ export interface IApplicationSharedCraftRemoved {
   type: "application_shared_craft_removed";
   id: string;
 }
+
+export interface IBitcraftEmpire {
+  id: string;
+  name: string;
+  shardTreasury: number;
+}
+
+export interface IBitcraftEmpiresInit {
+  type: "bitcraft_empires_init";
+  empires: IBitcraftEmpire[];
+}
+
+export interface IBitcraftEmpireAdded {
+  type: "bitcraft_empire_added";
+  entity: IBitcraftEmpire;
+}
+
+export interface IBitcraftEmpireUpdated {
+  type: "bitcraft_empire_updated";
+  oldEntity: IBitcraftEmpire;
+  newEntity: IBitcraftEmpire;
+}
+
+export interface IBitcraftEmpireDeleted {
+  type: "bitcraft_empire_deleted";
+  entity: IBitcraftEmpire;
+}
+
+export interface IApplicationEmpireTreasuryUpdated {
+  type: "application_empire_treasury_changed";
+  empire: {
+    id: string;
+    name: string;
+  };
+  oldAmount: number;
+  newAmount: number;
+}

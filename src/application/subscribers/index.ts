@@ -19,6 +19,7 @@ import {
   onProgressiveActionStateAdded,
   onPublicProgressiveActionStateDeleted,
 } from "./onPublicProgressiveActionState";
+import { onEmpireUpdated } from "./onEmpireState";
 
 export function registerApplicationSubscribers() {
   PubSub.subscribe("bitcraft_recipes_init", onRecipesInit);
@@ -40,6 +41,8 @@ export function registerApplicationSubscribers() {
   PubSub.subscribe("bitcraft_sell_order_added", onSellOrderAdded);
   PubSub.subscribe("bitcraft_sell_order_updated", onSellOrderUpdated);
   PubSub.subscribe("bitcraft_sell_order_deleted", onSellOrderDeleted);
+
+  PubSub.subscribe("bitcraft_empire_updated", onEmpireUpdated);
 
   PubSub.subscribe(
     "bitcraft_progressive_action_added",

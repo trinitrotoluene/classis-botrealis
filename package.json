@@ -1,5 +1,5 @@
 {
-  "name": "bitcraft-manager",
+  "name": "calvera",
   "version": "0.1.0",
   "private": true,
   "description": "An all-in-one Discord bot for managing Bitcraft projects at scale",
@@ -25,7 +25,8 @@
     "bitcraft:get-auth-token": "tsx ./src/bitcraft/__meta__/getAuthToken.ts",
     "bitcraft:playground": "tsx ./src/bitcraft/__meta__/playground.ts",
     "bitcraft:dump-schema": "tsx ./src/bitcraft/__meta__/dumpSchema.ts",
-    "bitcraft:generate-bindings": "spacetime generate --lang typescript --out-dir .bindings --module-def .bitcraft/schema.json"
+    "bitcraft:generate-bindings:ts": "spacetime generate --lang typescript --out-dir .bindings --module-def .bitcraft/schema.json",
+    "bitcraft:generate-bindings:cs": "spacetime generate --lang cs --out-dir ../vela/Bindings --module-def .bitcraft/schema.json"
   },
   "author": "trinitrotoluene",
   "license": "UNLICENSED",
@@ -39,6 +40,7 @@
     "pg": "^8.16.3",
     "pino": "^9.7.0",
     "pino-pretty": "^13.0.0",
+    "postgres-array": "^3.0.4",
     "vite-tsconfig-paths": "^5.1.4",
     "yaml": "^2.8.0",
     "zod": "^4.0.5"

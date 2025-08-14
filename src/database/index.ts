@@ -1,2 +1,2 @@
 export { db } from "./db";
-export { migrator } from "./migrate";
+// export { migrator } from "./migrate";

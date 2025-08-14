@@ -3,12 +3,14 @@ import { logger } from "@src/logger";
 import { Client, Events, GatewayIntentBits, MessageFlags } from "discord.js";
 import { CommandsCollection } from "./commands";
 import { db } from "@src/database";
-import { CommandBus, PubSub } from "@src/framework";
+import { CommandBus, PubSub, QueryBus } from "@src/framework";
 import InitialiseBitcraftServiceCommand from "@src/application/commands/bitcraft/InitialiseBitcraftServiceCommand";
 import CreateClaimSubscriptionCommand from "@src/application/commands/bitcraft/CreateClaimSubscriptionCommand";
 import { onMessageOrModAction } from "./subscribers/onMessageOrModAction";
 import { onApplicationSharedCraftRemoved } from "./subscribers/onApplicationSharedCraftRemoved";
 import { onApplicationSharedCraftStarted } from "./subscribers/onApplicationSharedCraftStarted";
+import GetEnabledFeaturesQuery from "@src/application/queries/config/GetEnabledFeaturesQuery";
+import { onApplicationEmpireTreasuryChanged } from "./subscribers/onApplicationEmpireTreasuryChanged";
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds],
@@ -16,9 +18,11 @@ const client = new Client({
 
 client.on(Events.ClientReady, async (client) => {
   logger.info("Connected to Discord as " + client.user?.tag);
+  await client.application.fetch();
 
   await CommandBus.execute(new InitialiseBitcraftServiceCommand({}));
 
+  // todo wtf? why is this not a Query
   const serverConfigs = await db
     .selectFrom("server_config")
     .select("linked_claim_id")
@@ -39,6 +43,9 @@ client.on(Events.ClientReady, async (client) => {
   );
   PubSub.subscribe("application_shared_craft_removed", (e) =>
     onApplicationSharedCraftRemoved(client, e)
+  );
+  PubSub.subscribe("application_empire_treasury_changed", (e) =>
+    onApplicationEmpireTreasuryChanged(client, e)
   );
 });
 
@@ -97,6 +104,41 @@ client.on(Events.InteractionCreate, async (interaction) => {
     return;
   }
 
+  if (command.requiredFeatures) {
+    if (!interaction.guildId) {
+      await interaction.reply({
+        content: "This command can only be run in a Discord server",
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
+    }
+
+    const enabledFeatures = await QueryBus.execute(
+      new GetEnabledFeaturesQuery({ serverId: interaction.guildId })
+    );
+
+    if (!enabledFeatures.ok) {
+      await interaction.reply({
+        content:
+          "This command depends on a feature check which was not successful",
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
+    }
+
+    for (const requiredFeature of command.requiredFeatures) {
+      if (
+        !enabledFeatures.data.enabledFeatures.find((x) => x === requiredFeature)
+      ) {
+        await interaction.reply({
+          content: `This command requires the following features to be enabled for your server ${command.requiredFeatures.join(", ")}`,
+          flags: MessageFlags.Ephemeral,
+        });
+        return;
+      }
+    }
+  }
+
   if (
     command.requiredPermissions &&
     !interaction.memberPermissions?.has(command.requiredPermissions)
@@ -125,6 +167,14 @@ client.on(Events.InteractionCreate, async (interaction) => {
       },
       "executing slash command"
     );
+
+    if (
+      command.isAdminGuildOnly &&
+      interaction.user.id !== interaction.client.application.owner?.id
+    ) {
+      logger.warn("Non admin user attempted to execute admin command");
+      return;
+    }
 
     await command.execute(interaction);
   } catch (error) {
