@@ -39,11 +39,14 @@ await client.connect();
 
 (globalThis as Record<string, unknown>).pgClient = client;
 
-const { configureDb, setupEnumArrayParsers } = await import("./src/database");
+const { configureDb, setupEnumArrayParsers } = await import(
+  "./src/database/db"
+);
+
 await configureDb();
-// Simply importing this file causes the migrations to run.
-// We cannot pre-import it because obviously there's nothing to migrate before this point.
-await import("./src/database/__meta__/migrateToLatest");
+
+const { migrateToLatest } = await import("./src/database/migrate");
+await migrateToLatest();
 // Run this AFTER the db has been migrated so the enum types exist
 await setupEnumArrayParsers();
 

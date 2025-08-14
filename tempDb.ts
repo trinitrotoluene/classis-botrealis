@@ -1,6 +1,7 @@
 import { config } from "dotenv";
 import { GenericContainer, Wait } from "testcontainers";
 import { Config } from "./src/config";
+import { configureDb } from "./src/database/db";
 
 // Load integration test specific environment variables
 const envPath = "./.env.integrationtests";
@@ -30,6 +31,7 @@ Config.set("postgres.port", port);
 process.env.OVERRIDE_PG_HOST = host;
 process.env.OVERRIDE_PG_PORT = port.toString();
 
+await configureDb();
 // Simply importing this file causes the migrations to run.
 // We cannot pre-import it because obviously there's nothing to migrate before this point.
 await import("./src/database/__meta__/migrateToLatest");
