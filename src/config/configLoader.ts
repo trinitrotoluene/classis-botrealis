@@ -83,6 +83,7 @@ function environmentBasedConfig(): Partial<ValidatedConfig> {
     discord: {
       token: process.env.DISCORD_BOT_TOKEN,
       dev_app_id: process.env.DISCORD_APP_ID,
+      dev_guild_id: process.env.DISCORD_ADMIN_GUILD_ID,
     },
     bitcraft: {
       uri: process.env.BITCRAFT_URI,
