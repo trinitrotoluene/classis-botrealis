@@ -1,17 +1,38 @@
 import GetAllEmpireObservationThreadsQuery from "@src/application/queries/config/GetAllEmpireObservationThreadsQuery";
 import {
+  EventAggregator,
   QueryBus,
   type IApplicationEmpireTreasuryUpdated,
 } from "@src/framework";
+import { logger } from "@src/logger";
 import { ContainerBuilder, MessageFlags, type Client } from "discord.js";
+
+const Aggregator = new EventAggregator<IApplicationEmpireTreasuryUpdated>();
 
 export async function onApplicationEmpireTreasuryChanged(
   client: Client,
   event: IApplicationEmpireTreasuryUpdated
 ) {
+  Aggregator.push(
+    event.empire.id,
+    event,
+    (events) => aggregateCallback(client, events),
+    10
+  );
+}
+
+export async function aggregateCallback(
+  client: Client,
+  events: IApplicationEmpireTreasuryUpdated[]
+) {
+  logger.info(`Running aggregate callback for ${events.length} events`);
+  if (events.length === 0) {
+    return;
+  }
+
   const serversToNotify = await QueryBus.execute(
     new GetAllEmpireObservationThreadsQuery({
-      empireId: event.empire.id,
+      empireId: events[0].empire.id,
     })
   );
 
@@ -19,21 +40,30 @@ export async function onApplicationEmpireTreasuryChanged(
     return;
   }
 
-  const change = event.newAmount - event.oldAmount;
-  const sign = change >= 0 ? "+" : "-";
+  const allChanges = events.map((x) => x.newAmount - x.oldAmount);
+
+  const totalChange = allChanges.reduce((acc, n) => acc + n, 0);
+  const totalWithdrawals = allChanges
+    .filter((x) => x < 0)
+    .reduce((acc, n) => acc + n, 0);
+  const totalDeposits = allChanges
+    .filter((x) => x >= 0)
+    .reduce((acc, n) => acc + n, 0);
+
+  const sign = (n: number) => (n >= 0 ? "+" : "");
 
   const builder = new ContainerBuilder()
     .setAccentColor(0xd9427e)
     .addTextDisplayComponents((c) =>
-      c.setContent(`## ${event.empire.name} hexite treasury updated`)
+      c.setContent(`## ${events[0].empire.name} hexite treasury updated`)
     )
     .addSeparatorComponents((s) => s)
     .addTextDisplayComponents((c) =>
       c.setContent(`\`\`\`
-Old balance : ${event.oldAmount}
-New amount  : ${event.newAmount}
+Net change         : ${sign(totalChange)}
 
-Change      : ${sign}${change}
+Sum of deposits    : ${sign(totalDeposits)}
+Sum of withdrawals : ${sign(totalWithdrawals)}
 \`\`\`
 `)
     );

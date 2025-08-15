@@ -161,4 +161,6 @@ export type TPubSubEventType<TKey extends string> =
       : never
     : never;
 
+export { EventAggregator } from "./EventAggregator";
+
 registerApplicationSubscribers();
