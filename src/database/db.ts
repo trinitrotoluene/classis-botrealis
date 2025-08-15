@@ -37,6 +37,8 @@ export async function configureDb() {
   db = new Kysely<Database>({
     dialect,
   });
+
+  await setupEnumArrayParsers();
 }
 
 export async function setupEnumArrayParsers() {

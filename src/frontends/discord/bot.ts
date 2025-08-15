@@ -127,6 +127,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 
     for (const requiredFeature of command.requiredFeatures) {
+      console.log(enabledFeatures.data);
       if (
         !enabledFeatures.data.enabledFeatures.find((x) => x === requiredFeature)
       ) {
