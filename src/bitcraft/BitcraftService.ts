@@ -135,7 +135,10 @@ export class BitcraftService {
       "SELECT * from item_desc",
       "SELECT * from crafting_recipe_desc",
       "SELECT * from item_list_desc",
-      "SELECT * from empire_state",
+      `SELECT e.* FROM empire_state e
+JOIN claim_state c
+  ON e.capital_building_entity_id = c.owner_building_entity_id
+`,
       "SELECT * from building_desc",
       "SELECT t.* from claim_state t WHERE t.neutral = FALSE",
       "SELECT * from player_username_state",

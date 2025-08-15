@@ -15,7 +15,7 @@ export const requiredPermissions = PermissionFlagsBits.ManageMessages;
 export const requiredFeatures = [ServerFeature.observe_empires];
 
 export const data = new SlashCommandBuilder()
-  .setName("observe_empire")
+  .setName("empire-track")
   .setDefaultMemberPermissions(requiredPermissions)
   .setDescription("Log empire updates to a thread")
   .addSubcommand((s) =>
@@ -154,7 +154,13 @@ registerSubCommand("watch", {
 
     await i.respond(
       searchResult.ok
-        ? searchResult.data.results.map((x) => ({ name: x.name, value: x.id }))
+        ? [
+            { name: "*", value: "*" },
+            ...searchResult.data.results.map((x) => ({
+              name: x.name,
+              value: x.id,
+            })),
+          ]
         : []
     );
   },
@@ -208,7 +214,13 @@ registerSubCommand("unwatch", {
 
     await i.respond(
       searchResult.ok
-        ? searchResult.data.results.map((x) => ({ name: x.name, value: x.id }))
+        ? [
+            { name: "*", value: "*" },
+            ...searchResult.data.results.map((x) => ({
+              name: x.name,
+              value: x.id,
+            })),
+          ]
         : []
     );
   },

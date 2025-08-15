@@ -22,6 +22,11 @@ describe("GetAllEmpireObservationThreadsQuery", () => {
           id: "server-3" as ServerConfigId,
           observing_empire_ids: ["empire-1"],
         },
+        {
+          id: "server-4" as ServerConfigId,
+          observing_empire_ids: ["*"],
+          observing_empire_logs_thread_id: "thread-4",
+        },
       ])
       .execute();
 
@@ -31,7 +36,10 @@ describe("GetAllEmpireObservationThreadsQuery", () => {
     const result = await query.execute();
 
     expect(result).toEqual({
-      results: [{ serverId: "server-1", threadId: "thread-1" }],
+      results: [
+        { serverId: "server-1", threadId: "thread-1" },
+        { serverId: "server-4", threadId: "thread-4" },
+      ],
     });
   });
 });
