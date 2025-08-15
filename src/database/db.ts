@@ -5,6 +5,8 @@ import { Config } from "@src/config";
 import { Pool, types as pgTypes } from "pg";
 import parsePgArray from "postgres-array";
 import { logger } from "@src/logger";
+import { FileMigrationProvider, Migrator } from "kysely";
+import path from "path";
 
 // The OVERRIDE_PG variables are present to allow integration tests to force the driver to
 // connect to the container - however the host/port are not known until the container has started so
@@ -62,5 +64,56 @@ export async function setupEnumArrayParsers() {
     }
   } finally {
     client.release();
+  }
+}
+
+async function getMigrator() {
+  return new Migrator({
+    db: db,
+    provider: new FileMigrationProvider({
+      fs: await import("fs/promises"),
+      path: await import("path"),
+      migrationFolder: path.join(process.cwd(), "src/__migrations__"),
+    }),
+  });
+}
+
+export async function migrateToLatest() {
+  logger.info("Applying migrations");
+
+  const migrator = await getMigrator();
+  const { error, results } = await migrator.migrateToLatest();
+
+  results?.forEach((it) => {
+    if (it.status === "Success") {
+      logger.info(`migration "${it.migrationName}" was executed successfully`);
+    } else if (it.status === "Error") {
+      logger.error(`failed to execute migration "${it.migrationName}"`);
+    }
+  });
+
+  if (error) {
+    logger.error("failed to migrate");
+    logger.error(error);
+  }
+}
+
+export async function migrateDown() {
+  logger.info("Migrating down");
+
+  const migrator = await getMigrator();
+  const { error, results } = await migrator.migrateDown();
+
+  results?.forEach((it) => {
+    if (it.status === "Success") {
+      logger.info(`migration "${it.migrationName}" was executed successfully`);
+    } else if (it.status === "Error") {
+      logger.error(`failed to execute migration "${it.migrationName}"`);
+    }
+  });
+
+  if (error) {
+    logger.error("failed to migrate");
+    logger.error(error);
   }
 }

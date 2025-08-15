@@ -1,3 +1,4 @@
-import { migrateDown } from "../migrate";
+import { configureDb, migrateDown } from "../db";
 
+await configureDb();
 await migrateDown();

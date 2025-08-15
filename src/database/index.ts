@@ -1,2 +1,7 @@
-export { db, configureDb, setupEnumArrayParsers } from "./db";
-export { migrateToLatest, migrateDown } from "./migrate";
+export {
+  db,
+  configureDb,
+  setupEnumArrayParsers,
+  migrateDown,
+  migrateToLatest,
+} from "./db";

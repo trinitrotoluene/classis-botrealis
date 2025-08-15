@@ -1,3 +1,3 @@
-import { migrateToLatest } from "../migrate";
-
+import { configureDb, migrateToLatest } from "../db";
+await configureDb();
 await migrateToLatest();
