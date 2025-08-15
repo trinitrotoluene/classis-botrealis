@@ -50,7 +50,7 @@ export async function aggregateCallback(
     .filter((x) => x >= 0)
     .reduce((acc, n) => acc + n, 0);
 
-  const sign = (n: number) => (n >= 0 ? "+" : "");
+  const sign = (n: number) => (n > 0 ? `+${n}` : n.toString());
 
   const builder = new ContainerBuilder()
     .setAccentColor(0xd9427e)
