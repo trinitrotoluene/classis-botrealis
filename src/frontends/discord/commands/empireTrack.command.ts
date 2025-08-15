@@ -156,7 +156,7 @@ registerSubCommand("watch", {
       searchResult.ok
         ? [
             { name: "*", value: "*" },
-            ...searchResult.data.results.map((x) => ({
+            ...searchResult.data.results.slice(0, 24).map((x) => ({
               name: x.name,
               value: x.id,
             })),
@@ -216,7 +216,7 @@ registerSubCommand("unwatch", {
       searchResult.ok
         ? [
             { name: "*", value: "*" },
-            ...searchResult.data.results.map((x) => ({
+            ...searchResult.data.results.slice(0, 24).map((x) => ({
               name: x.name,
               value: x.id,
             })),
