@@ -60,6 +60,7 @@ export async function aggregateCallback(
     .addSeparatorComponents((s) => s)
     .addTextDisplayComponents((c) =>
       c.setContent(`\`\`\`
+Total shards       : ${events.slice(-1)[0]?.newAmount ?? "n/a"}
 Net change         : ${sign(totalChange)}
 
 Sum of deposits    : ${sign(totalDeposits)}
