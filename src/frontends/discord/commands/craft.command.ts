@@ -148,7 +148,9 @@ registerSubCommand("check", {
       )
       .addSeparatorComponents((s) => s)
       .addTextDisplayComponents((t) =>
-        t.setContent(["```", ...recipeTreeLines, "```"].join("\n"))
+        t.setContent(
+          ["```", ...recipeTreeLines.slice(0, 3800), "```"].join("\n")
+        )
       );
 
     await i.reply({
@@ -172,43 +174,45 @@ function renderRecipeTree(
   depth = 0,
   indent = ""
 ) {
+  if (!recipe.item) {
+    return;
+  }
+
   if (depth > maxDepth) {
     return;
   }
 
   let hide = false;
 
-  if (lens.tier !== undefined && lens.tier !== recipe.item?.tier) {
+  if (lens.tier !== undefined && lens.tier !== recipe.item.tier) {
     hide = true;
   }
 
-  if (
-    lens.itemName !== undefined &&
-    lens.itemName.test(recipe.item?.name ?? "")
-  ) {
+  if (lens.itemName !== undefined && lens.itemName.test(recipe.item.name)) {
     hide = true;
   }
 
   if (!hide) {
     builder.push(
-      `${indent}T${recipe.item?.tier} ${recipe.item?.name} ${inventoryMap.get(recipe.itemId) ?? "0"}/${recipe.quantity}`
+      `${indent}- T${recipe.item.tier} ${recipe.item.name} ${inventoryMap.get(recipe.itemId) ?? "0"}/${recipe.quantity}`
     );
   }
 
-  const firstChildRecipe = recipe.recipes[Object.keys(recipe.recipes)[0]];
-  if (firstChildRecipe == undefined) {
-    return;
-  }
+  const recipeOptions = Object.keys(recipe.recipes).map(
+    (x) => recipe.recipes[x]
+  );
 
-  for (const childRecipeNode of firstChildRecipe) {
-    renderRecipeTree(
-      builder,
-      childRecipeNode,
-      inventoryMap,
-      lens,
-      maxDepth,
-      hide ? depth : depth + 1,
-      indent + (hide ? "" : "  ")
-    );
+  for (const recipeOption of recipeOptions) {
+    for (const childRecipeNode of recipeOption) {
+      renderRecipeTree(
+        builder,
+        childRecipeNode,
+        inventoryMap,
+        lens,
+        maxDepth,
+        hide ? depth : depth + 1,
+        indent + (hide ? "" : "  ")
+      );
+    }
   }
 }

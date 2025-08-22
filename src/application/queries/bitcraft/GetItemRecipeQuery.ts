@@ -1,6 +1,7 @@
 import { db } from "@src/database";
 import type { ItemsId } from "@src/database/__generated__/public/Items";
 import { CommandBase, type IBitcraftRecipe } from "@src/framework";
+import { logger } from "@src/logger";
 import NodeCache from "node-cache";
 
 interface Args {
@@ -37,7 +38,8 @@ export default class GetItemRecipeQuery extends CommandBase<Args, Response> {
 
 async function getRecipeNodes(
   itemId: number,
-  quantity: number
+  quantity: number,
+  visited = new Set<number>()
 ): Promise<IRecipeNode> {
   const cacheEntry = RecipeNodeCache.get(`${itemId}-${quantity}`) as
     | IRecipeNode
@@ -46,18 +48,33 @@ async function getRecipeNodes(
     return cacheEntry;
   }
 
+  if (visited.has(itemId)) {
+    logger.warn(`Cycle detected for item ${itemId}`);
+    return {
+      itemId: itemId,
+      item: undefined,
+      quantity,
+      recipePicker: {},
+      recipes: {},
+    };
+  }
+
   const item = await getItem(itemId.toString());
   const recipes = await getAllRecipesProducing(itemId);
 
   const recipePicker: IRecipeNode["recipePicker"] = {};
   const recipeOptions: IRecipeNode["recipes"] = {};
 
+  visited.add(itemId);
+
   for (const recipe of recipes) {
     const consumedItems =
       recipe.consumed_item_stacks as IBitcraftRecipe["consumedItemStacks"];
 
     const nodesForConsumedItems = await Promise.all(
-      consumedItems.map((x) => getRecipeNodes(x.itemId, x.quantity * quantity))
+      consumedItems.map((x) =>
+        getRecipeNodes(x.itemId, x.quantity * quantity, new Set(visited))
+      )
     );
 
     const firstConsumedItemName = nodesForConsumedItems[0]?.item?.name ?? "n/a";
