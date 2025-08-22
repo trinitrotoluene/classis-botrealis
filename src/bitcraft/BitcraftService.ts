@@ -3,6 +3,7 @@ import type {
   ChatMessageState,
   DbConnection,
   EventContext,
+  Pocket,
   UserModerationState,
 } from "@src/bindings";
 import { logger } from "@src/logger";
@@ -243,6 +244,43 @@ ON p.entity_id = s.entity_id
             AND (
               ${barterStalls.map((x) => `d.name = '${x.name}'`).join(" OR ")}
             )`
+    );
+
+    const subscriptionBuilder: string[] = [];
+    for (const buildingState of this.conn.db.buildingState.iter()) {
+      if (buildingState.claimEntityId.toString() !== claimId) continue;
+
+      subscriptionBuilder.push(
+        `SELECT * FROM inventory_state WHERE owner_entity_id = '${buildingState.entityId}'`
+      );
+    }
+
+    await subscribeAsync(this.conn, subscriptionBuilder);
+  }
+
+  public getBarterStallItems(claimId: string) {
+    const output: Pocket[] = [];
+
+    const claimStalls = [...this.conn.db.buildingState.iter()].filter(
+      (x) => x.claimEntityId.toString() === claimId
+    );
+
+    const inventories = new Map(
+      [...this.conn.db.inventoryState.iter()].map((x) => [
+        x.ownerEntityId,
+        x.pockets,
+      ])
+    );
+
+    for (const stall of claimStalls) {
+      const inventory = inventories.get(stall.entityId);
+      if (!inventory) continue;
+
+      output.push(...inventory);
+    }
+
+    return new Map(
+      output.map((x) => [x.contents?.itemId ?? 0, x.contents?.quantity ?? 0])
     );
   }
 

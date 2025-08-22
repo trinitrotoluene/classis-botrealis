@@ -12,7 +12,7 @@ interface Response {
   recipe?: IRecipeNode;
 }
 
-interface IRecipeNode {
+export interface IRecipeNode {
   itemId: number;
   item?: {
     name: string;
