@@ -10,5 +10,5 @@ export interface BitcraftPublicProgressiveAction {
   OwnerEntityId: string;
   Id: string;
   Module?: string;
-  [k: string]: unknown;
+  
 }

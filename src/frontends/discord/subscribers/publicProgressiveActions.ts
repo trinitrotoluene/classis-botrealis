@@ -42,7 +42,7 @@ export async function onSharedCraftInserted(
         {
           type: "Feature",
           properties: {
-            popupText: event.claimName,
+            popupText: claim?.Name ?? "n/a",
             iconName: "waypoint",
             turnLayerOff: ["ruinedLayer", "treesLayer", "templesLayer"],
           },

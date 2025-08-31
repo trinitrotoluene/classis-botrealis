@@ -10,5 +10,5 @@ export interface BitcraftLocationState {
   Z: number;
   Id: string;
   Module?: string;
-  [k: string]: unknown;
+  
 }

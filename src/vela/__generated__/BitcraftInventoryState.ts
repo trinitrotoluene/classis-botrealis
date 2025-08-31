@@ -9,7 +9,7 @@ export interface BitcraftInventoryState {
   Pockets: {
     ItemId: string | null;
     Quantity: number | null;
-    [k: string]: unknown;
+    
   }[];
   Id: string;
   Module?: string;

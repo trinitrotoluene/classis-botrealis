@@ -9,5 +9,5 @@ export interface HeartbeatEvent {
   Application: string;
   PublishedAt: string;
   Seq: number;
-  [k: string]: unknown;
+  
 }

@@ -13,5 +13,5 @@ export interface BitcraftUserModerationState {
   ExpiresAt: string;
   Id: string;
   Module?: string;
-  [k: string]: unknown;
+  
 }

@@ -9,5 +9,5 @@ export interface BitcraftUsernameState {
   Username: string;
   Id: string;
   Module?: string;
-  [k: string]: unknown;
+  
 }

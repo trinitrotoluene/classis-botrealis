@@ -6,6 +6,7 @@ import { logger } from "@src/logger";
 const inputDir = "./src/vela/__schema__";
 const outputDir = "./src/vela/__generated__";
 
+fs.rmdirSync(outputDir, { recursive: true });
 fs.mkdirSync(outputDir, { recursive: true });
 
 const schemaNames: Array<{ name: string; metadata: { isGlobal: boolean } }> =
@@ -22,7 +23,9 @@ for (const file of files) {
     const rawSchema = JSON.parse(fs.readFileSync(inputPath, "utf-8"));
     const isGlobalEntity = !!rawSchema["x-global-entity"];
 
-    const ts = await compileFromFile(inputPath, {});
+    let ts = await compileFromFile(inputPath, {});
+    ts = ts.replace("[k: string]: unknown;", "");
+
     fs.writeFileSync(outputPath, ts);
     logger.info(`Generated: ${outputPath}`);
     schemaNames.push({

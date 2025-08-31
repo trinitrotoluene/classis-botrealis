@@ -10,5 +10,5 @@ export interface BitcraftEmpireState {
   ShardTreasury: number;
   Id: string;
   Module?: string;
-  [k: string]: unknown;
+  
 }

@@ -12,7 +12,7 @@ export interface BitcraftItemList {
     Items: {
       ItemId: number;
       Quantity: number;
-      [k: string]: unknown;
+      
     }[];
     [k: string]: unknown;
   }[];

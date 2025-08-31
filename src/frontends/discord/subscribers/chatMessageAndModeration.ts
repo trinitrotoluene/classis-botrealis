@@ -1,8 +1,5 @@
 import GetAllWebhooksForChannelQuery from "@src/application/queries/config/GetAllWebhooksForChannelQuery";
-import {
-  ChannelId,
-  QueryBus,
-} from "@src/framework";
+import { ChannelId, QueryBus } from "@src/framework";
 import { logger } from "@src/logger";
 import type {
   BitcraftChatMessage,
@@ -19,7 +16,7 @@ export async function onBitcraftChatMessage(payload: BitcraftChatMessage) {
 
   if (!response.ok) {
     logger.warn(
-      `Failed to fetch configured webhooks for channel ${payload.channelId}`
+      `Failed to fetch configured webhooks for channel ${payload.ChannelId}`
     );
     return;
   }
@@ -27,14 +24,16 @@ export async function onBitcraftChatMessage(payload: BitcraftChatMessage) {
   await Promise.all(
     response.data.results.map((config) => {
       return sendWebhook(config, {
-        username: `[${payload.channelId}] ${payload.senderUsername}`,
+        username: payload.SenderUsername,
         content: payload.Content,
       });
     })
   );
 }
 
-export async function onBitcraftUserModerated(payload: BitcraftUserModerationState) {
+export async function onBitcraftUserModerated(
+  payload: BitcraftUserModerationState
+) {
   const response = await QueryBus.execute(
     new GetAllWebhooksForChannelQuery({ channelId: ChannelId.Region })
   );

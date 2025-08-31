@@ -12,5 +12,5 @@ export interface BitcraftChatMessage {
   Content: string;
   Id: string;
   Module?: string;
-  [k: string]: unknown;
+  
 }

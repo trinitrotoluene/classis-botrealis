@@ -10,7 +10,7 @@ export interface BitcraftRecipe {
   BuildingRequirement: {
     BuildingType: number;
     Tier: number;
-    [k: string]: unknown;
+    
   } | null;
   LevelRequirements: {
     SkillId: number;

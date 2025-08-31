@@ -11,5 +11,5 @@ export interface BitcraftProgressiveAction {
   Progress: number;
   Id: string;
   Module?: string;
-  [k: string]: unknown;
+  
 }
