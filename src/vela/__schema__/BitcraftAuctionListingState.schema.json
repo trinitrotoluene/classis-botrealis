@@ -1,0 +1,39 @@
+{
+  "type": "object",
+  "properties": {
+    "OwnerId": {
+      "type": "string"
+    },
+    "ClaimId": {
+      "type": "string"
+    },
+    "Price": {
+      "type": "integer"
+    },
+    "Quantity": {
+      "type": "integer"
+    },
+    "StoredCoins": {
+      "type": "integer"
+    },
+    "ItemId": {
+      "type": "integer"
+    },
+    "Id": {
+      "type": "string"
+    },
+    "Module": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "OwnerId",
+    "ClaimId",
+    "Price",
+    "Quantity",
+    "StoredCoins",
+    "ItemId",
+    "Id"
+  ],
+  "x-global-entity": true
+}

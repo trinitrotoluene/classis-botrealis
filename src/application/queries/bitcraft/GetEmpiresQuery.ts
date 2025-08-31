@@ -1,5 +1,5 @@
-import { BitcraftService } from "@src/bitcraft";
 import { CommandBase } from "@src/framework";
+import { CacheClient } from "@src/vela";
 
 interface Args {
   searchText: string;
@@ -13,14 +13,20 @@ interface Response {
 }
 
 export default class GetEmpiresQuery extends CommandBase<Args, Response> {
-  execute() {
+  async execute() {
+    const empires = await CacheClient.getAllGlobal("BitcraftEmpireState");
     return {
-      results: BitcraftService.instance
-        .getEmpires(this.args.searchText)
+      results: empires
+        .values()
+        .filter((x) =>
+          x.Name.toLowerCase().includes(this.args.searchText.toLowerCase())
+        )
         .map((x) => ({
-          id: x.entityId.toString(),
-          name: x.name,
-        })),
+          id: x.Id,
+          name: x.Name,
+        }))
+        .toArray()
+        .slice(0, 25),
     };
   }
 }

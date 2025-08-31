@@ -58,12 +58,8 @@ registerSubCommand("check", {
     }
 
     const { value } = itemOption;
-
-    const itemId = parseInt(value?.toString() ?? "");
-
-    const itemResult = await QueryBus.execute(
-      new GetItemQuery({ id: itemId.toString() })
-    );
+    const itemId = value?.toString() ?? "";
+    const itemResult = await QueryBus.execute(new GetItemQuery({ id: itemId }));
     const priceResult = await QueryBus.execute(
       new GetPriceInformationQuery({ id: itemId })
     );

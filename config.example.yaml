@@ -14,3 +14,6 @@ bitcraft:
   authToken:
   uri: bitcraft-early-access.spacetimedb.com
   module: bitcraft-1
+redis:
+  host: localhost
+  port: 6379

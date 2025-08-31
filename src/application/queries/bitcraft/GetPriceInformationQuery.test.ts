@@ -29,7 +29,7 @@ describe("GetPriceInformationQuery", () => {
   });
 
   it("Returns undefined if there is no data", async () => {
-    const command = new GetPriceInformationQuery({ id: 1 });
+    const command = new GetPriceInformationQuery({ id: "1" });
     const result = command.execute();
 
     expect(result).toEqual({
@@ -52,7 +52,7 @@ describe("GetPriceInformationQuery", () => {
       },
     ]);
 
-    const command = new GetPriceInformationQuery({ id: 1 });
+    const command = new GetPriceInformationQuery({ id: "1" });
     const result = command.execute();
 
     expect(result).toEqual({
@@ -82,7 +82,7 @@ describe("GetPriceInformationQuery", () => {
     ]);
     getSellsSpy.mockReturnValue([]);
 
-    const command = new GetPriceInformationQuery({ id: 1 });
+    const command = new GetPriceInformationQuery({ id: "1" });
     const result = command.execute();
 
     expect(result).toEqual({
@@ -116,7 +116,7 @@ describe("GetPriceInformationQuery", () => {
         .toArray()
     );
 
-    const command = new GetPriceInformationQuery({ id: 1 });
+    const command = new GetPriceInformationQuery({ id: "1" });
     const result = command.execute();
 
     expect(result).toEqual({
@@ -159,7 +159,7 @@ describe("GetPriceInformationQuery", () => {
 
     getSellsSpy.mockReturnValue([]);
 
-    const command = new GetPriceInformationQuery({ id: 1 });
+    const command = new GetPriceInformationQuery({ id: "1" });
     const result = command.execute();
 
     expect(result).toEqual({

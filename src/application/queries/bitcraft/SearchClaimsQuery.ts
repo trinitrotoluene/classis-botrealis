@@ -1,5 +1,5 @@
-import { BitcraftService } from "@src/bitcraft";
 import { CommandBase } from "@src/framework";
+import { CacheClient } from "@src/vela";
 
 interface Args {
   claimName: string;
@@ -11,12 +11,16 @@ interface Response {
 
 export default class SearchClaimsQuery extends CommandBase<Args, Response> {
   async execute() {
-    const claims = BitcraftService.instance.searchClaims(this.args.claimName);
+    const claims = await CacheClient.getAllGlobal("BitcraftClaimState");
+
     return {
-      results: claims.map((x) => ({
-        name: x.name,
-        entityId: x.entityId.toString(),
-      })),
+      results: claims
+        .values()
+        .map((x) => ({
+          name: x.Name,
+          entityId: x.Id,
+        }))
+        .toArray(),
     };
   }
 }

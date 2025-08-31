@@ -3,12 +3,12 @@ import { describe, expect, it } from "vitest";
 
 describe("GetItemRecipeQuery", () => {
   it("Correctly computes the recipe nodes for T3 plank", async () => {
-    const query = new GetItemRecipeQuery({ itemId: 3020003, quantity: 25 });
+    const query = new GetItemRecipeQuery({ itemId: "3020003", quantity: 25 });
     const result = await query.execute();
 
     expect(result).toEqual({
       recipe: {
-        itemId: 3020003,
+        itemId: "3020003",
         item: {
           name: "Sturdy Plank",
           tier: 3,

@@ -12,7 +12,6 @@ import GetServerConfigQuery from "@src/application/queries/config/GetServerConfi
 import { commandDefinition } from "./sdk/CommandBuilder";
 import SearchClaimsQuery from "@src/application/queries/bitcraft/SearchClaimsQuery";
 import GetClaimQuery from "@src/application/queries/bitcraft/GetClaimQuery";
-import CreateClaimSubscriptionCommand from "@src/application/commands/bitcraft/CreateClaimSubscriptionCommand";
 
 export const requiredPermissions = PermissionFlagsBits.Administrator;
 
@@ -150,12 +149,6 @@ registerSubCommand("configure", {
         flags: MessageFlags.Ephemeral,
       });
     }
-
-    await CommandBus.execute(
-      new CreateClaimSubscriptionCommand({
-        claimId: claim.data.entityId,
-      })
-    );
 
     await i.reply({
       content: `Linked your server with claim ${claim.data.name}`,

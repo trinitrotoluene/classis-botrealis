@@ -89,6 +89,12 @@ function environmentBasedConfig(): Partial<ValidatedConfig> {
       uri: process.env.BITCRAFT_URI,
       module: process.env.BITCRAFT_MODULE,
     },
+    redis: {
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT
+        ? parseInt(process.env.REDIS_PORT)
+        : undefined,
+    },
     postgres: {},
   } as ValidatedConfig;
 }

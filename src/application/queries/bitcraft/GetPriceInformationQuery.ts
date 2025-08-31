@@ -1,9 +1,10 @@
 import { BuyOrderCache } from "@src/application/services/BuyOrderCache";
+import type { IOrderMetadata } from "@src/application/services/OrderCacheImpl";
 import { SellOrderCache } from "@src/application/services/SellOrderCache";
-import { CommandBase, type IBitcraftAuctionOrder } from "@src/framework";
+import { CommandBase } from "@src/framework";
 
 export interface Args {
-  id: number;
+  id: string;
 }
 
 export interface Response {
@@ -34,7 +35,7 @@ export default class GetPriceInformationQuery extends CommandBase<
   }
 }
 
-function calculatePrices(orders: IBitcraftAuctionOrder[]) {
+function calculatePrices(orders: IOrderMetadata[]) {
   if (orders.length < 1) {
     return undefined;
   }

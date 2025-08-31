@@ -89,13 +89,13 @@ registerSubCommand("check", {
     }
 
     const quantity = i.options.getNumber("quantity", false) ?? 1;
-    const depth = i.options.getNumber("depth", false) ?? 5;
+    // const depth = i.options.getNumber("depth", false) ?? 5;
     const tierFilter = i.options.getNumber("tier", false);
     const itemName = i.options.getString("item_name", false);
 
     const { value } = itemOption;
 
-    const itemId = parseInt(value?.toString() ?? "");
+    const itemId = value?.toString() ?? "";
 
     const recipeResult = await QueryBus.execute(
       new GetItemRecipeQuery({ itemId: itemId, quantity: quantity })
@@ -122,16 +122,26 @@ registerSubCommand("check", {
       return;
     }
 
-    const recipeTreeLines: string[] = [];
-    renderRecipeTree(
-      recipeTreeLines,
+    const lens = {
+      tier: tierFilter ?? undefined,
+      itemName: itemName ? new RegExp(itemName) : undefined,
+    };
+    // const recipeTreeLines: string[] = [];
+    // renderRecipeTree(
+    //   recipeTreeLines,
+    //   recipeResult.data.recipe,
+    //   inventoryResult.data,
+    //   lens,
+    //   depth
+    // );
+
+    const renderedRecipeMap: Parameters<typeof renderFlattenedRecipeList>[0] =
+      new Map();
+    renderFlattenedRecipeList(
+      renderedRecipeMap,
       recipeResult.data.recipe,
       inventoryResult.data,
-      {
-        tier: tierFilter ?? undefined,
-        itemName: itemName ? new RegExp(itemName) : undefined,
-      },
-      depth
+      lens
     );
 
     const builder = new ContainerBuilder()
@@ -149,7 +159,18 @@ registerSubCommand("check", {
       .addSeparatorComponents((s) => s)
       .addTextDisplayComponents((t) =>
         t.setContent(
-          ["```", ...recipeTreeLines.slice(0, 3800), "```"].join("\n")
+          [
+            "```",
+            ...renderedRecipeMap
+              .values()
+              .map(
+                (x) =>
+                  `T${x.item.tier} ${x.item.name} ${x.consumed}/${x.required}`
+              ),
+            "```",
+          ]
+            .join("\n")
+            .slice(0, 3800)
         )
       );
 
@@ -165,20 +186,21 @@ interface ILensOptions {
   itemName?: RegExp;
 }
 
-function renderRecipeTree(
-  builder: string[],
+function renderFlattenedRecipeList(
+  builder: Map<
+    string,
+    {
+      item: { name: string; tier: number };
+      required: number;
+      consumed: number;
+      hide?: boolean;
+    }
+  >,
   recipe: IRecipeNode,
-  inventoryMap: Map<number, number>,
-  lens: ILensOptions,
-  maxDepth = 5,
-  depth = 0,
-  indent = ""
+  inventoryMap: Map<string, number>,
+  lens: ILensOptions
 ) {
   if (!recipe.item) {
-    return;
-  }
-
-  if (depth > maxDepth) {
     return;
   }
 
@@ -193,26 +215,78 @@ function renderRecipeTree(
   }
 
   if (!hide) {
-    builder.push(
-      `${indent}- T${recipe.item.tier} ${recipe.item.name} ${inventoryMap.get(recipe.itemId) ?? "0"}/${recipe.quantity}`
-    );
+    const available = inventoryMap.get(recipe.itemId.toString()) ?? 0;
+    const required = recipe.quantity;
+
+    const quantityConsumed = Math.min(available, required);
+    inventoryMap.set(recipe.itemId.toString(), available - quantityConsumed);
+
+    const existingRecord = builder.get(recipe.itemId.toString()) ?? {
+      item: recipe.item,
+      required: 0,
+      consumed: 0,
+    };
+
+    existingRecord.required += required;
+    existingRecord.consumed += quantityConsumed;
+
+    builder.set(recipe.itemId.toString(), existingRecord);
   }
 
-  const recipeOptions = Object.keys(recipe.recipes).map(
-    (x) => recipe.recipes[x]
-  );
-
-  for (const recipeOption of recipeOptions) {
-    for (const childRecipeNode of recipeOption) {
-      renderRecipeTree(
-        builder,
-        childRecipeNode,
-        inventoryMap,
-        lens,
-        maxDepth,
-        hide ? depth : depth + 1,
-        indent + (hide ? "" : "  ")
-      );
-    }
+  const chosenRecipe = recipe.recipes[Object.keys(recipe.recipes)[0]];
+  for (const childRecipe of chosenRecipe ?? []) {
+    renderFlattenedRecipeList(builder, childRecipe, inventoryMap, lens);
   }
 }
+
+// function renderRecipeTree(
+//   builder: string[],
+//   recipe: IRecipeNode,
+//   inventoryMap: Map<number, number>,
+//   lens: ILensOptions,
+//   maxDepth = 5,
+//   depth = 0,
+//   indent = ""
+// ) {
+//   if (!recipe.item) {
+//     return;
+//   }
+
+//   if (depth > maxDepth) {
+//     return;
+//   }
+
+//   let hide = false;
+
+//   if (lens.tier !== undefined && lens.tier !== recipe.item.tier) {
+//     hide = true;
+//   }
+
+//   if (lens.itemName !== undefined && lens.itemName.test(recipe.item.name)) {
+//     hide = true;
+//   }
+
+//   if (!hide) {
+//     builder.push(
+//       `${indent}- T${recipe.item.tier} ${recipe.item.name} ${inventoryMap.get(recipe.itemId) ?? "0"}/${recipe.quantity}`
+//     );
+//   }
+
+//   const recipeOptions = Object.keys(recipe.recipes).map(
+//     (x) => recipe.recipes[x]
+//   );
+
+//   for (const recipeOption of recipeOptions) {
+//     for (const childRecipeNode of recipeOption) {
+//       renderRecipeTree(
+//         builder,
+//         childRecipeNode,
+//         inventoryMap,
+//         lens,
+//         maxDepth,
+//         hide ? depth : depth + 1,
+//         indent + (hide ? "" : "  ")
+//       );
+//     }
+//   }
+// }

@@ -1,11 +1,12 @@
 import { db } from "@src/database";
 import type { ItemsId } from "@src/database/__generated__/public/Items";
-import { CommandBase, type IBitcraftRecipe } from "@src/framework";
+import { CommandBase } from "@src/framework";
 import { logger } from "@src/logger";
+import type { BitcraftRecipe } from "@src/vela";
 import NodeCache from "node-cache";
 
 interface Args {
-  itemId: number;
+  itemId: string;
   quantity: number;
 }
 
@@ -14,7 +15,7 @@ interface Response {
 }
 
 export interface IRecipeNode {
-  itemId: number;
+  itemId: string;
   item?: {
     name: string;
     tier: number;
@@ -37,15 +38,26 @@ export default class GetItemRecipeQuery extends CommandBase<Args, Response> {
 }
 
 async function getRecipeNodes(
-  itemId: number,
+  itemId: string,
   quantity: number,
-  visited = new Set<number>()
+  visited = new Set<string>()
 ): Promise<IRecipeNode> {
   const cacheEntry = RecipeNodeCache.get(`${itemId}-${quantity}`) as
     | IRecipeNode
     | undefined;
   if (cacheEntry) {
     return cacheEntry;
+  }
+
+  if (itemId === undefined) {
+    logger.warn(`getRecipeNodes called with undefined itemId`);
+    return {
+      itemId: itemId,
+      item: undefined,
+      quantity,
+      recipePicker: {},
+      recipes: {},
+    };
   }
 
   if (visited.has(itemId)) {
@@ -69,11 +81,11 @@ async function getRecipeNodes(
 
   for (const recipe of recipes) {
     const consumedItems =
-      recipe.consumed_item_stacks as IBitcraftRecipe["consumedItemStacks"];
+      recipe.consumed_item_stacks as BitcraftRecipe["ConsumedItemStacks"];
 
     const nodesForConsumedItems = await Promise.all(
       consumedItems.map((x) =>
-        getRecipeNodes(x.itemId, x.quantity * quantity, new Set(visited))
+        getRecipeNodes(x.ItemId, x.Quantity * quantity, new Set(visited))
       )
     );
 
@@ -103,7 +115,7 @@ async function getRecipeNodes(
   return entry;
 }
 
-function getAllRecipesProducing(itemId: number) {
+function getAllRecipesProducing(itemId: string) {
   return db
     .selectFrom("recipes")
     .selectAll()

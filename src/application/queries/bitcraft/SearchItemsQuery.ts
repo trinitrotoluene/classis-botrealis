@@ -26,7 +26,9 @@ export default class SearchItemsQuery extends CommandBase<Args, Response> {
       builder = builder.where(
         "has_compendium_entry",
         "is",
-        this.args.hasCompendiumEntry
+        this.args.hasCompendiumEntry === undefined
+          ? true
+          : this.args.hasCompendiumEntry
       );
     }
 

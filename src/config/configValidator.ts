@@ -20,6 +20,10 @@ export const ConfigValidator = z.object({
     uri: z.string(),
     module: z.string(),
   }),
+  redis: z.object({
+    host: z.string(),
+    port: z.number(),
+  }),
   logger: z
     .object({
       destination: z.string(),

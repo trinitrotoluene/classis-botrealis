@@ -2,61 +2,87 @@ import { Config } from "@src/config";
 import { logger } from "@src/logger";
 import { Client, Events, GatewayIntentBits, MessageFlags } from "discord.js";
 import { CommandsCollection } from "./commands";
-import { db } from "@src/database";
-import { CommandBus, PubSub, QueryBus } from "@src/framework";
-import InitialiseBitcraftServiceCommand from "@src/application/commands/bitcraft/InitialiseBitcraftServiceCommand";
-import CreateClaimSubscriptionCommand from "@src/application/commands/bitcraft/CreateClaimSubscriptionCommand";
-import { onMessageOrModAction } from "./subscribers/onMessageOrModAction";
-import { onApplicationSharedCraftRemoved } from "./subscribers/onApplicationSharedCraftRemoved";
-import { onApplicationSharedCraftStarted } from "./subscribers/onApplicationSharedCraftStarted";
+import { CommandBus, QueryBus } from "@src/framework";
+import {
+  onBitcraftChatMessage,
+  onBitcraftUserModerated,
+} from "./subscribers/chatMessageAndModeration";
 import GetEnabledFeaturesQuery from "@src/application/queries/config/GetEnabledFeaturesQuery";
-import { onApplicationEmpireTreasuryChanged } from "./subscribers/onApplicationEmpireTreasuryChanged";
+import { onEmpireStateUpdated } from "./subscribers/empireState";
+import { PubSub } from "@src/vela";
+import {
+  onSharedCraftInserted,
+  onSharedCraftDeleted,
+} from "./subscribers/publicProgressiveActions";
+import ConnectToRedisCommand from "@src/application/commands/redis/ConnectToRedisCommand";
+import {
+  onAuctionListingStateDeleted,
+  onAuctionListingStateInserted,
+  onAuctionListingStateUpdated,
+} from "./subscribers/auctionListingState";
+import UpsertItemsFromCacheCommand from "@src/application/commands/bitcraft/UpsertItemsFromCacheCommand";
+import UpsertRecipesFromCacheCommand from "@src/application/commands/bitcraft/UpsertRecipesFromCacheCommand";
+import ResetOrderCacheCommand from "@src/application/commands/bitcraft/ResetOrderCacheCommand";
 
-const client = new Client({
+export const DiscordBot = new Client({
   intents: [GatewayIntentBits.Guilds],
 });
 
-client.on(Events.ClientReady, async (client) => {
+DiscordBot.on(Events.ClientReady, async (client) => {
   logger.info("Connected to Discord as " + client.user?.tag);
   await client.application.fetch();
 
-  await CommandBus.execute(new InitialiseBitcraftServiceCommand({}));
+  await CommandBus.execute(new ConnectToRedisCommand({}));
+  await CommandBus.execute(new UpsertItemsFromCacheCommand({}));
+  await CommandBus.execute(new UpsertRecipesFromCacheCommand({}));
+  await CommandBus.execute(new ResetOrderCacheCommand({}));
 
-  // todo wtf? why is this not a Query
-  const serverConfigs = await db
-    .selectFrom("server_config")
-    .select("linked_claim_id")
-    .where("linked_claim_id", "is not", null)
-    .execute();
-
-  const linkedClaimIds = new Set(serverConfigs.map((x) => x.linked_claim_id));
-  for (const claimId of linkedClaimIds.values()) {
-    if (claimId) {
-      await CommandBus.execute(new CreateClaimSubscriptionCommand({ claimId }));
-    }
-  }
-
-  PubSub.subscribe("bitcraft_chat_message", onMessageOrModAction);
-  PubSub.subscribe("bitcraft_user_moderated", onMessageOrModAction);
-  PubSub.subscribe("application_shared_craft_started", (e) =>
-    onApplicationSharedCraftStarted(client, e)
+  PubSub.subscribe(
+    "bitcraft.BitcraftChatMessage.insert",
+    onBitcraftChatMessage
   );
-  PubSub.subscribe("application_shared_craft_removed", (e) =>
-    onApplicationSharedCraftRemoved(client, e)
+
+  PubSub.subscribe(
+    "bitcraft.BitcraftUserModerationState.insert",
+    onBitcraftUserModerated
   );
-  PubSub.subscribe("application_empire_treasury_changed", (e) =>
-    onApplicationEmpireTreasuryChanged(client, e)
+
+  PubSub.subscribe(
+    "bitcraft.BitcraftEmpireState.update",
+    onEmpireStateUpdated
+  );
+
+  PubSub.subscribe(
+    "bitcraft.BitcraftPublicProgressiveAction.insert",
+    onSharedCraftInserted
+  );
+  PubSub.subscribe(
+    "bitcraft.BitcraftPublicProgressiveAction.delete",
+    onSharedCraftDeleted
+  );
+
+  PubSub.subscribe(
+    "bitcraft.BitcraftAuctionListingState.insert",
+    onAuctionListingStateInserted
+  );
+  PubSub.subscribe(
+    "bitcraft.BitcraftAuctionListingState.update",
+    onAuctionListingStateUpdated
+  );
+  PubSub.subscribe(
+    "bitcraft.BitcraftAuctionListingState.delete",
+    onAuctionListingStateDeleted
   );
 });
 
-client.on(Events.GuildAvailable, (guild) => {
+DiscordBot.on(Events.GuildAvailable, (guild) => {
   logger.info(
     { guildId: guild.id },
     `Guild available: ${guild.name} (${guild.id})`
   );
 });
 
-client.on(Events.InteractionCreate, async (interaction) => {
+DiscordBot.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isAutocomplete()) {
     return;
   }
@@ -87,7 +113,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
-client.on(Events.InteractionCreate, async (interaction) => {
+DiscordBot.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) {
     return;
   }
@@ -200,4 +226,4 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
-await client.login(Config.discord.token);
+await DiscordBot.login(Config.discord.token);
