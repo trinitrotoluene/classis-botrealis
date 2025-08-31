@@ -4,6 +4,7 @@ function getRemoteLoggingConfig() {
   return [
     {
       target: "pino-opentelemetry-transport",
+      options: {},
     },
   ];
 }
