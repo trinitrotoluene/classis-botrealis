@@ -85,10 +85,6 @@ function environmentBasedConfig(): Partial<ValidatedConfig> {
       dev_app_id: process.env.DISCORD_APP_ID,
       dev_guild_id: process.env.DISCORD_ADMIN_GUILD_ID,
     },
-    bitcraft: {
-      uri: process.env.BITCRAFT_URI,
-      module: process.env.BITCRAFT_MODULE,
-    },
     redis: {
       host: process.env.REDIS_HOST,
       port: process.env.REDIS_PORT

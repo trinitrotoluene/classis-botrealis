@@ -13,23 +13,10 @@ export const ConfigValidator = z.object({
     password: z.string().min(1, "Postgres password is required"),
     database: z.string().min(1, "Postgres database is required"),
   }),
-  bitcraft: z.object({
-    email: z.email(),
-    accessToken: z.string().optional(),
-    authToken: z.string().optional(),
-    uri: z.string(),
-    module: z.string(),
-  }),
   redis: z.object({
     host: z.string(),
     port: z.number(),
   }),
-  logger: z
-    .object({
-      destination: z.string(),
-      token: z.string(),
-    })
-    .optional(),
 });
 
 export type ValidatedConfig = z.infer<typeof ConfigValidator>;

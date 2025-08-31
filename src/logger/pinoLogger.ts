@@ -1,14 +1,9 @@
-import { Config } from "@src/config";
 import pino from "pino";
 
-function getRemoteLoggingConfig(config: Required<typeof Config>["logger"]) {
+function getRemoteLoggingConfig() {
   return [
     {
-      target: "@logtail/pino",
-      options: {
-        sourceToken: config.token,
-        options: { endpoint: config.destination },
-      },
+      target: "pino-opentelemetry-transport",
     },
   ];
 }
@@ -22,8 +17,10 @@ function getLocalLoggerConfig() {
   ];
 }
 
-const transport = Config.logger
-  ? pino.transport({ targets: getRemoteLoggingConfig(Config.logger) })
+const isProd = process.env.ENV === "prod";
+
+const transport = isProd
+  ? pino.transport({ targets: getRemoteLoggingConfig() })
   : pino.transport({ targets: getLocalLoggerConfig() });
 
 function truncateArrays(
@@ -57,7 +54,7 @@ function truncateArrays(
 
 export const logger = pino(
   {
-    level: Config.logger ? "info" : "debug",
+    level: isProd ? "info" : "debug",
     hooks: {
       logMethod(rawArg, method) {
         const sanitizedArgs = truncateArrays(rawArg);
