@@ -14,6 +14,10 @@
       "type": "string"
     }
   },
-  "required": ["Name", "ShardTreasury", "Id"],
+  "required": [
+    "Name",
+    "ShardTreasury",
+    "Id"
+  ],
   "x-global-entity": true
 }

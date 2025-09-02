@@ -7,13 +7,22 @@
         "type": "object",
         "properties": {
           "ItemId": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "Quantity": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           }
         },
-        "required": ["ItemId", "Quantity"]
+        "required": [
+          "ItemId",
+          "Quantity"
+        ]
       }
     },
     "Id": {
@@ -23,5 +32,8 @@
       "type": "string"
     }
   },
-  "required": ["Pockets", "Id"]
+  "required": [
+    "Pockets",
+    "Id"
+  ]
 }

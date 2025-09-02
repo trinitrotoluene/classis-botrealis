@@ -14,5 +14,9 @@
       "type": "string"
     }
   },
-  "required": ["X", "Z", "Id"]
+  "required": [
+    "X",
+    "Z",
+    "Id"
+  ]
 }

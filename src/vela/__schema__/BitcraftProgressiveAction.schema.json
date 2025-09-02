@@ -17,5 +17,10 @@
       "type": "string"
     }
   },
-  "required": ["RecipeId", "CraftCount", "Progress", "Id"]
+  "required": [
+    "RecipeId",
+    "CraftCount",
+    "Progress",
+    "Id"
+  ]
 }
