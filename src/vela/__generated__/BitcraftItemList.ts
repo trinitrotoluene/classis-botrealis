@@ -15,4 +15,5 @@ export interface BitcraftItemList {
   }[];
   Id: string;
   Module?: string;
+  CallerIdentity?: string;
 }

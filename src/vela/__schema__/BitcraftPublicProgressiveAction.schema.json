@@ -12,11 +12,10 @@
     },
     "Module": {
       "type": "string"
+    },
+    "CallerIdentity": {
+      "type": "string"
     }
   },
-  "required": [
-    "BuildingEntityId",
-    "OwnerEntityId",
-    "Id"
-  ]
+  "required": ["BuildingEntityId", "OwnerEntityId", "Id"]
 }

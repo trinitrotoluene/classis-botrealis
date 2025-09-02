@@ -8,18 +8,14 @@
       "type": "string"
     },
     "SubjectType": {
-      "enum": [
-        "player"
-      ]
+      "enum": ["player"]
     },
     "ObjectEntityId": {
       "type": "string"
     },
     "Action": {
       "type": "object",
-      "required": [
-        "$type"
-      ],
+      "required": ["$type"],
       "anyOf": [
         {
           "properties": {
@@ -33,10 +29,7 @@
               "type": "integer"
             }
           },
-          "required": [
-            "ItemId",
-            "Quantity"
-          ]
+          "required": ["ItemId", "Quantity"]
         },
         {
           "properties": {
@@ -50,10 +43,7 @@
               "type": "integer"
             }
           },
-          "required": [
-            "ItemId",
-            "Quantity"
-          ]
+          "required": ["ItemId", "Quantity"]
         },
         {
           "properties": {
@@ -68,6 +58,9 @@
       "type": "string"
     },
     "Module": {
+      "type": "string"
+    },
+    "CallerIdentity": {
       "type": "string"
     }
   },

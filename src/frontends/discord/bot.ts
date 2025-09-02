@@ -23,6 +23,11 @@ import {
 import UpsertItemsFromCacheCommand from "@src/application/commands/bitcraft/UpsertItemsFromCacheCommand";
 import UpsertRecipesFromCacheCommand from "@src/application/commands/bitcraft/UpsertRecipesFromCacheCommand";
 import ResetOrderCacheCommand from "@src/application/commands/bitcraft/ResetOrderCacheCommand";
+import {
+  onEmpireNodeSiegeStateAdded,
+  onEmpireNodeSiegeStateDeleted,
+  onEmpireNodeSiegeStateUpdated,
+} from "./subscribers/empireNodeSiegeState";
 
 export const DiscordBot = new Client({
   intents: [GatewayIntentBits.Guilds],
@@ -69,6 +74,18 @@ DiscordBot.on(Events.ClientReady, async (client) => {
   PubSub.subscribe(
     "bitcraft.BitcraftAuctionListingState.delete",
     onAuctionListingStateDeleted,
+  );
+  PubSub.subscribe(
+    "bitcraft.BitcraftEmpireNodeSiegeState.insert",
+    onEmpireNodeSiegeStateAdded,
+  );
+  PubSub.subscribe(
+    "bitcraft.BitcraftEmpireNodeSiegeState.update",
+    onEmpireNodeSiegeStateUpdated,
+  );
+  PubSub.subscribe(
+    "bitcraft.BitcraftEmpireNodeSiegeState.delete",
+    onEmpireNodeSiegeStateDeleted,
   );
 });
 

@@ -22,7 +22,7 @@
     "db:migrate": "tsx ./src/database/__meta__/migrateToLatest.ts",
     "db:migrate:down": "tsx ./src/database/__meta__/migrateDown.ts",
     "db:temp": "tsx ./tempDb.ts",
-    "vela:generate-types": "tsx ./src/vela/__meta__/generateTypes.ts",
+    "vela:generate-types": "tsx ./src/vela/__meta__/generateTypes.ts && prettier --write .",
     "prepare": "husky"
   },
   "author": "trinitrotoluene",
@@ -67,6 +67,9 @@
     "vitest": "^3.2.4"
   },
   "lint-staged": {
-    "*.ts|js|md|cjs|mjs|json": ["eslint --fix", "prettier --write"]
+    "*.ts|js|md|cjs|mjs|json": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }

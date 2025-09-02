@@ -9,4 +9,5 @@ export interface BitcraftEmpireState {
   ShardTreasury: number;
   Id: string;
   Module?: string;
+  CallerIdentity?: string;
 }

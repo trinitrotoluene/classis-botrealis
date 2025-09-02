@@ -13,11 +13,6 @@ export abstract class CommandBase<
   abstract execute(): Promise<TResult> | TResult;
 
   override toString(): string {
-    // convert this.args to json without quotes around keys
-    const args = Object.entries(this.args)
-      .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
-      .join(", ");
-
-    return `${this.constructor.name} { ${args} }`;
+    return this.constructor.name;
   }
 }

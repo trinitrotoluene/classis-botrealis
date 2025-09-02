@@ -25,4 +25,5 @@ export interface BitcraftActionLogState {
       };
   Id: string;
   Module?: string;
+  CallerIdentity?: string;
 }

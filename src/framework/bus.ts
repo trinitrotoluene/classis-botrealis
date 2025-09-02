@@ -15,10 +15,10 @@ export class CommandBusImpl {
     command: TCommand,
   ): Promise<TResult<Awaited<ReturnType<TCommand["execute"]>>>> {
     try {
-      logger.info(`Executing ${command}`);
+      logger.info(`Executing ${command}`, command.args);
 
       const result = await command.execute();
-      logger.info("OK");
+      logger.debug("OK");
 
       return new SuccessResult(
         result as Awaited<ReturnType<TCommand["execute"]>>,

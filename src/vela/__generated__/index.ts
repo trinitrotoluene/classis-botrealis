@@ -5,6 +5,8 @@ export * from "./BitcraftBuildingDesc";
 export * from "./BitcraftBuildingState";
 export * from "./BitcraftChatMessage";
 export * from "./BitcraftClaimState";
+export * from "./BitcraftEmpireNodeSiegeState";
+export * from "./BitcraftEmpireNodeState";
 export * from "./BitcraftEmpireState";
 export * from "./BitcraftInventoryState";
 export * from "./BitcraftItem";
@@ -14,6 +16,7 @@ export * from "./BitcraftProgressiveAction";
 export * from "./BitcraftPublicProgressiveAction";
 export * from "./BitcraftRecipe";
 export * from "./BitcraftUserModerationState";
+export * from "./BitcraftUserState";
 export * from "./BitcraftUsernameState";
 export * from "./HeartbeatEvent";
 
@@ -23,6 +26,8 @@ import type { BitcraftBuildingDesc } from "./BitcraftBuildingDesc";
 import type { BitcraftBuildingState } from "./BitcraftBuildingState";
 import type { BitcraftChatMessage } from "./BitcraftChatMessage";
 import type { BitcraftClaimState } from "./BitcraftClaimState";
+import type { BitcraftEmpireNodeSiegeState } from "./BitcraftEmpireNodeSiegeState";
+import type { BitcraftEmpireNodeState } from "./BitcraftEmpireNodeState";
 import type { BitcraftEmpireState } from "./BitcraftEmpireState";
 import type { BitcraftInventoryState } from "./BitcraftInventoryState";
 import type { BitcraftItem } from "./BitcraftItem";
@@ -32,6 +37,7 @@ import type { BitcraftProgressiveAction } from "./BitcraftProgressiveAction";
 import type { BitcraftPublicProgressiveAction } from "./BitcraftPublicProgressiveAction";
 import type { BitcraftRecipe } from "./BitcraftRecipe";
 import type { BitcraftUserModerationState } from "./BitcraftUserModerationState";
+import type { BitcraftUserState } from "./BitcraftUserState";
 import type { BitcraftUsernameState } from "./BitcraftUsernameState";
 import type { HeartbeatEvent } from "./HeartbeatEvent";
 
@@ -42,6 +48,8 @@ export enum BitcraftEntities {
   BitcraftBuildingState = "BitcraftBuildingState",
   BitcraftChatMessage = "BitcraftChatMessage",
   BitcraftClaimState = "BitcraftClaimState",
+  BitcraftEmpireNodeSiegeState = "BitcraftEmpireNodeSiegeState",
+  BitcraftEmpireNodeState = "BitcraftEmpireNodeState",
   BitcraftEmpireState = "BitcraftEmpireState",
   BitcraftInventoryState = "BitcraftInventoryState",
   BitcraftItem = "BitcraftItem",
@@ -51,6 +59,7 @@ export enum BitcraftEntities {
   BitcraftPublicProgressiveAction = "BitcraftPublicProgressiveAction",
   BitcraftRecipe = "BitcraftRecipe",
   BitcraftUserModerationState = "BitcraftUserModerationState",
+  BitcraftUserState = "BitcraftUserState",
   BitcraftUsernameState = "BitcraftUsernameState",
 }
 
@@ -66,6 +75,8 @@ export type TAllEntityMap = {
   BitcraftBuildingState: BitcraftBuildingState;
   BitcraftChatMessage: BitcraftChatMessage;
   BitcraftClaimState: BitcraftClaimState;
+  BitcraftEmpireNodeSiegeState: BitcraftEmpireNodeSiegeState;
+  BitcraftEmpireNodeState: BitcraftEmpireNodeState;
   BitcraftEmpireState: BitcraftEmpireState;
   BitcraftInventoryState: BitcraftInventoryState;
   BitcraftItem: BitcraftItem;
@@ -75,6 +86,7 @@ export type TAllEntityMap = {
   BitcraftPublicProgressiveAction: BitcraftPublicProgressiveAction;
   BitcraftRecipe: BitcraftRecipe;
   BitcraftUserModerationState: BitcraftUserModerationState;
+  BitcraftUserState: BitcraftUserState;
   BitcraftUsernameState: BitcraftUsernameState;
   HeartbeatEvent: HeartbeatEvent;
 };
@@ -85,10 +97,13 @@ export type TRegionalEntityMap = {
   BitcraftBuildingDesc: BitcraftBuildingDesc;
   BitcraftBuildingState: BitcraftBuildingState;
   BitcraftChatMessage: BitcraftChatMessage;
+  BitcraftEmpireNodeSiegeState: BitcraftEmpireNodeSiegeState;
+  BitcraftEmpireNodeState: BitcraftEmpireNodeState;
   BitcraftInventoryState: BitcraftInventoryState;
   BitcraftLocationState: BitcraftLocationState;
   BitcraftProgressiveAction: BitcraftProgressiveAction;
   BitcraftPublicProgressiveAction: BitcraftPublicProgressiveAction;
+  BitcraftUserState: BitcraftUserState;
   HeartbeatEvent: HeartbeatEvent;
 };
 

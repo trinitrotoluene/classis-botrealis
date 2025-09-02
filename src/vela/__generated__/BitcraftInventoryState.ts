@@ -11,4 +11,5 @@ export interface BitcraftInventoryState {
   }[];
   Id: string;
   Module?: string;
+  CallerIdentity?: string;
 }

@@ -1,22 +1,28 @@
 {
   "type": "object",
   "properties": {
-    "OwnerId": {
+    "EmpireId": {
       "type": "string"
     },
-    "ClaimId": {
-      "type": "string"
+    "IsActive": {
+      "type": "boolean"
     },
-    "Price": {
+    "ChunkIndex": {
       "type": "integer"
     },
-    "Quantity": {
+    "Dimension": {
       "type": "integer"
     },
-    "StoredCoins": {
+    "LocationX": {
       "type": "integer"
     },
-    "ItemId": {
+    "LocationZ": {
+      "type": "integer"
+    },
+    "Upkeep": {
+      "type": "integer"
+    },
+    "Energy": {
       "type": "integer"
     },
     "Id": {
@@ -30,13 +36,14 @@
     }
   },
   "required": [
-    "OwnerId",
-    "ClaimId",
-    "Price",
-    "Quantity",
-    "StoredCoins",
-    "ItemId",
+    "EmpireId",
+    "IsActive",
+    "ChunkIndex",
+    "Dimension",
+    "LocationX",
+    "LocationZ",
+    "Upkeep",
+    "Energy",
     "Id"
-  ],
-  "x-global-entity": true
+  ]
 }

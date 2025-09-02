@@ -57,4 +57,32 @@ export class CacheClientImpl {
 
     return output;
   }
+
+  async getCaller(entity: { Module?: string; CallerIdentity?: string }) {
+    if (!entity.CallerIdentity) {
+      return undefined;
+    }
+
+    const userState = await this.getById(
+      "BitcraftUserState",
+      entity.Module,
+      entity.CallerIdentity,
+    );
+    if (!userState) {
+      return undefined;
+    }
+
+    const usernameState = await this.getByIdGlobal(
+      "BitcraftUsernameState",
+      userState.UserEntityId,
+    );
+    if (!usernameState) {
+      return { ...userState, username: undefined };
+    }
+
+    return {
+      ...userState,
+      username: usernameState.Username,
+    };
+  }
 }

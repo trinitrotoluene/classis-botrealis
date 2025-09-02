@@ -8,4 +8,5 @@ export interface BitcraftUsernameState {
   Username: string;
   Id: string;
   Module?: string;
+  CallerIdentity?: string;
 }

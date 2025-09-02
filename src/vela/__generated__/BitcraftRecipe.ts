@@ -24,6 +24,7 @@ export interface BitcraftRecipe {
   ActionsRequired: number;
   Id: string;
   Module?: string;
+  CallerIdentity?: string;
 }
 export interface Items {
   ItemId: string;

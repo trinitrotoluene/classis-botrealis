@@ -4,11 +4,15 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface BitcraftChatMessage {
-  ChannelId: number;
-  SenderId: string;
-  SenderUsername: string;
-  Content: string;
+export interface BitcraftEmpireNodeState {
+  EmpireId: string;
+  IsActive: boolean;
+  ChunkIndex: number;
+  Dimension: number;
+  LocationX: number;
+  LocationZ: number;
+  Upkeep: number;
+  Energy: number;
   Id: string;
   Module?: string;
   CallerIdentity?: string;

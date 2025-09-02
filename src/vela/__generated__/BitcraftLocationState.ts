@@ -9,4 +9,5 @@ export interface BitcraftLocationState {
   Z: number;
   Id: string;
   Module?: string;
+  CallerIdentity?: string;
 }

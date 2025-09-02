@@ -9,10 +9,10 @@
     },
     "Module": {
       "type": "string"
+    },
+    "CallerIdentity": {
+      "type": "string"
     }
   },
-  "required": [
-    "ClaimEntityId",
-    "Id"
-  ]
+  "required": ["ClaimEntityId", "Id"]
 }

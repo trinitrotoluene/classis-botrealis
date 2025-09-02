@@ -1,11 +1,11 @@
 {
   "type": "object",
   "properties": {
-    "X": {
-      "type": "integer"
+    "UserEntityId": {
+      "type": "string"
     },
-    "Z": {
-      "type": "integer"
+    "CanSignIn": {
+      "type": "boolean"
     },
     "Id": {
       "type": "string"
@@ -17,5 +17,5 @@
       "type": "string"
     }
   },
-  "required": ["X", "Z", "Id"]
+  "required": ["UserEntityId", "CanSignIn", "Id"]
 }

@@ -24,17 +24,11 @@
                   "type": "integer"
                 }
               },
-              "required": [
-                "ItemId",
-                "Quantity"
-              ]
+              "required": ["ItemId", "Quantity"]
             }
           }
         },
-        "required": [
-          "Probability",
-          "Items"
-        ]
+        "required": ["Probability", "Items"]
       }
     },
     "Id": {
@@ -42,12 +36,11 @@
     },
     "Module": {
       "type": "string"
+    },
+    "CallerIdentity": {
+      "type": "string"
     }
   },
-  "required": [
-    "Name",
-    "Possibilities",
-    "Id"
-  ],
+  "required": ["Name", "Possibilities", "Id"],
   "x-global-entity": true
 }

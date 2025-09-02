@@ -1,3 +1,4 @@
+import GetUsernameQuery from "@src/application/queries/bitcraft/GetUsernameQuery";
 import GetAllWebhooksForChannelQuery from "@src/application/queries/config/GetAllWebhooksForChannelQuery";
 import { ChannelId, QueryBus } from "@src/framework";
 import { logger } from "@src/logger";
@@ -45,11 +46,21 @@ export async function onBitcraftUserModerated(
     return;
   }
 
+  const usernameQuery = await QueryBus.execute(
+    new GetUsernameQuery({ id: payload.TargetEntityId }),
+  );
+
+  let targetName = payload.TargetEntityId;
+
+  if (usernameQuery.ok) {
+    targetName = usernameQuery.data.name ?? targetName;
+  }
+
   await Promise.all(
     response.data.results.map((config) => {
       return sendWebhook(config, {
         username: "[SYSTEM]",
-        content: `User ${payload.TargetEntityId} had had policy ${payload.UserModerationPolicy} applied until ${payload.ExpiresAt}.`,
+        content: `User ${targetName} had had policy ${payload.UserModerationPolicy} applied until ${payload.ExpiresAt}.`,
       });
     }),
   );

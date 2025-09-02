@@ -18,14 +18,11 @@
     },
     "Module": {
       "type": "string"
+    },
+    "CallerIdentity": {
+      "type": "string"
     }
   },
-  "required": [
-    "OwnerPlayerId",
-    "OwnerBuildingId",
-    "Name",
-    "IsNeutral",
-    "Id"
-  ],
+  "required": ["OwnerPlayerId", "OwnerBuildingId", "Name", "IsNeutral", "Id"],
   "x-global-entity": true
 }

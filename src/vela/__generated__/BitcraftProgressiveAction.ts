@@ -10,4 +10,5 @@ export interface BitcraftProgressiveAction {
   Progress: number;
   Id: string;
   Module?: string;
+  CallerIdentity?: string;
 }

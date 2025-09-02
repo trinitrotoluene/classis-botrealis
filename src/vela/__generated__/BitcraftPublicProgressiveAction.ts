@@ -9,4 +9,5 @@ export interface BitcraftPublicProgressiveAction {
   OwnerEntityId: string;
   Id: string;
   Module?: string;
+  CallerIdentity?: string;
 }

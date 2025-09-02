@@ -1,11 +1,17 @@
 {
   "type": "object",
   "properties": {
-    "Name": {
+    "EmpireId": {
       "type": "string"
     },
-    "Description": {
+    "IsActive": {
+      "type": "boolean"
+    },
+    "BuildingEntityId": {
       "type": "string"
+    },
+    "Energy": {
+      "type": "integer"
     },
     "Id": {
       "type": "string"
@@ -17,5 +23,5 @@
       "type": "string"
     }
   },
-  "required": ["Name", "Description", "Id"]
+  "required": ["EmpireId", "IsActive", "BuildingEntityId", "Energy", "Id"]
 }

@@ -8,4 +8,5 @@ export interface BitcraftBuildingState {
   ClaimEntityId: string;
   Id: string;
   Module?: string;
+  CallerIdentity?: string;
 }

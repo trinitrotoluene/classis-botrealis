@@ -21,4 +21,5 @@ export interface BitcraftItem {
   HasCompendiumEntry: boolean;
   Id: string;
   Module?: string;
+  CallerIdentity?: string;
 }
