@@ -20,6 +20,11 @@ export class CacheClientImpl {
     module: string | null | undefined,
     id: string,
   ): Promise<TRegionalEntityMap[TEntityName] | undefined> {
+    if (!module) {
+      throw new Error(
+        `Unintentional use of module-scoped cache lookup for ${entityName} ${id} but module was undefined`,
+      );
+    }
     const cacheKey = `cache:${entityName}:${module}`;
     const result = await getRedis().hget(cacheKey, id);
     if (!result) {
