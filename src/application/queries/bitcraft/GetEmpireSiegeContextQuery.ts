@@ -1,15 +1,12 @@
 import { CommandBase } from "@src/framework";
 import {
   CacheClient,
+  type BitcraftEmpireNodeSiegeState,
   type BitcraftEmpireNodeState,
   type BitcraftEmpireState,
 } from "@src/vela";
 
-interface Args {
-  siegeEmpireId: string;
-  siegeBuildingEntityId: string;
-  module?: string;
-}
+type Args = BitcraftEmpireNodeSiegeState;
 
 type Response = {
   defendingEmpire?: BitcraftEmpireState;
@@ -24,13 +21,13 @@ export default class GetEmpireSiegeContextQuery extends CommandBase<
   async execute() {
     const attackingEmpire = await CacheClient.getByIdGlobal(
       "BitcraftEmpireState",
-      this.args.siegeEmpireId,
+      this.args.EmpireId,
     );
 
     const tower = await CacheClient.getById(
       "BitcraftEmpireNodeState",
-      this.args.module,
-      this.args.siegeBuildingEntityId,
+      this.args.Module,
+      this.args.BuildingEntityId,
     );
 
     const defendingEmpire = tower

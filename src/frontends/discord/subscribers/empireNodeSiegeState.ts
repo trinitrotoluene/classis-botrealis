@@ -85,7 +85,7 @@ export function onEmpireNodeSiegeStateUpdated(
     newState.Id,
     { oldState, newState },
     onSiegeUpdatesCallback,
-    10,
+    30,
   );
 }
 
@@ -163,10 +163,7 @@ export async function onEmpireNodeSiegeStateDeleted(
   }
 
   const getContextRequest = await QueryBus.execute(
-    new GetEmpireSiegeContextQuery({
-      siegeEmpireId: state.EmpireId,
-      siegeBuildingEntityId: state.BuildingEntityId,
-    }),
+    new GetEmpireSiegeContextQuery(state),
   );
 
   if (!getContextRequest.ok) {

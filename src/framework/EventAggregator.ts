@@ -15,6 +15,7 @@ export class EventAggregator<TEvent> {
     event: TEvent,
     callback: (events: TEvent[]) => void | Promise<void>,
     delaySeconds = 10,
+    eventLimit: number | null = null,
   ) {
     let bucket = this.buckets.get(id);
     if (!bucket) {
@@ -29,6 +30,11 @@ export class EventAggregator<TEvent> {
       clearTimeout(bucket.timer);
     }
 
+    const delay =
+      eventLimit !== null && bucket.events.length >= eventLimit
+        ? 0
+        : delaySeconds * 1000;
+
     bucket.timer = setTimeout(async () => {
       this.buckets.delete(id);
       try {
@@ -36,6 +42,6 @@ export class EventAggregator<TEvent> {
       } catch (err: unknown) {
         logger.error(err, "Error thrown during event aggregation callback");
       }
-    }, delaySeconds * 1000);
+    }, delay);
   }
 }
