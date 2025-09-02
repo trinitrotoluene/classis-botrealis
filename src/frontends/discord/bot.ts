@@ -26,7 +26,7 @@ import ResetOrderCacheCommand from "@src/application/commands/bitcraft/ResetOrde
 import {
   onEmpireNodeSiegeStateAdded,
   onEmpireNodeSiegeStateDeleted,
-  // onEmpireNodeSiegeStateUpdated,
+  onEmpireNodeSiegeStateUpdated,
 } from "./subscribers/empireNodeSiegeState";
 
 export const DiscordBot = new Client({
@@ -79,10 +79,10 @@ DiscordBot.on(Events.ClientReady, async (client) => {
     "bitcraft.BitcraftEmpireNodeSiegeState.insert",
     onEmpireNodeSiegeStateAdded,
   );
-  // PubSub.subscribe(
-  //   "bitcraft.BitcraftEmpireNodeSiegeState.update",
-  //   onEmpireNodeSiegeStateUpdated,
-  // );
+  PubSub.subscribe(
+    "bitcraft.BitcraftEmpireNodeSiegeState.update",
+    onEmpireNodeSiegeStateUpdated,
+  );
   PubSub.subscribe(
     "bitcraft.BitcraftEmpireNodeSiegeState.delete",
     onEmpireNodeSiegeStateDeleted,

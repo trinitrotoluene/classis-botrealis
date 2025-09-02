@@ -4,6 +4,7 @@ import { logger } from "@src/logger";
 import { type BitcraftEmpireState } from "@src/vela";
 import { ContainerBuilder, MessageFlags } from "discord.js";
 import { DiscordBot } from "../bot";
+import { sign } from "@src/utils/sign";
 
 const Aggregator = new EventAggregator<
   BitcraftEmpireState & { oldAmount: number; newAmount: number }
@@ -52,8 +53,6 @@ export async function aggregateCallback(
   const totalDeposits = allChanges
     .filter((x) => x >= 0)
     .reduce((acc, n) => acc + n, 0);
-
-  const sign = (n: number) => (n > 0 ? `+${n}` : n.toString());
 
   const builder = new ContainerBuilder()
     .setAccentColor(0xd9427e)

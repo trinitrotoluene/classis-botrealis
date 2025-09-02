@@ -5,6 +5,7 @@ import { logger } from "@src/logger";
 import GetPublicCraftQuery from "@src/application/queries/bitcraft/GetPublicCraftQuery";
 import { QueryBus } from "@src/framework";
 import GetAllSharedCraftThreadsQuery from "@src/application/queries/config/GetAllSharedCraftThreadsQuery";
+import { generateMapUrl } from "@src/utils/generateMapUrl";
 
 const CraftAnnouncedSet = new Map<
   string,
@@ -36,27 +37,7 @@ export async function onSharedCraftInserted(
   let mapUrl: string | undefined;
 
   if (location) {
-    const mapOptions = {
-      type: "FeatureCollection",
-      features: [
-        {
-          type: "Feature",
-          properties: {
-            popupText: claim?.Name ?? "n/a",
-            iconName: "waypoint",
-            turnLayerOff: ["ruinedLayer", "treesLayer", "templesLayer"],
-          },
-          geometry: {
-            type: "Point",
-            coordinates: [location.X, location.Z],
-          },
-        },
-      ],
-    };
-
-    // this should be urlencoded but bitcraftmap doesn't seem to currently handle that correctly
-    const encodedMapOptions = JSON.stringify(mapOptions).replaceAll(" ", "%20");
-    mapUrl = `https://bitcraftmap.com/#${encodedMapOptions}`;
+    mapUrl = generateMapUrl(location.X, location.Z, claim?.Name ?? "n/a");
   }
 
   const formatProducedItem = (item: (typeof producedItems)[0]) =>

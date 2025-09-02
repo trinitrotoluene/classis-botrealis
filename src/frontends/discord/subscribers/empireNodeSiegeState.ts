@@ -5,6 +5,10 @@ import { logger } from "@src/logger";
 import type { BitcraftEmpireNodeSiegeState } from "@src/vela";
 import { ContainerBuilder, MessageFlags } from "discord.js";
 import { DiscordBot } from "../bot";
+import { sign } from "@src/utils/sign";
+import { generateMapUrl } from "@src/utils/generateMapUrl";
+
+const DEFAULT_NAME = "Unknown Empire";
 
 async function getEmpireThreadIds(empireId: string) {
   const serversToNotify = await QueryBus.execute(
@@ -46,18 +50,19 @@ export async function onEmpireNodeSiegeStateAdded(
     .setAccentColor(0xf05a4f)
     .addTextDisplayComponents((c) =>
       c.setContent(
-        `## ${attackingEmpire?.Name ?? "Unknown empire"} started a siege on ${defendingEmpire?.Name ?? "Unknown empire"}`,
+        `## ${attackingEmpire?.Name ?? DEFAULT_NAME} started a siege on ${defendingEmpire?.Name ?? DEFAULT_NAME}`,
       ),
     )
     .addSeparatorComponents((s) => s)
     .addTextDisplayComponents((c) =>
       c.setContent(
-        attackingEmpire && defendingEmpire
-          ? `⚔️ ${attackingEmpire.Name} has ${attackingEmpire.ShardTreasury} shards
-🛡️ ${defendingEmpire.Name} has ${defendingEmpire.ShardTreasury} shards
+        `⚔️ ${attackingEmpire?.Name ?? DEFAULT_NAME} has ${attackingEmpire?.ShardTreasury ?? "n/a"} shards
+🛡️ ${defendingEmpire?.Name ?? DEFAULT_NAME} has ${defendingEmpire?.ShardTreasury ?? "n/a"} shards
 
-🏰 The defending tower has ${tower?.Energy ?? "n/a"} energy`
-          : "Data missing",
+🏰 The defending tower has ${tower?.Energy ?? "n/a"} energy
+
+-# ${tower ? generateMapUrl(tower?.LocationX, tower?.LocationZ, "Tower under siege") : "sorry dunno where the tower is"}
+`,
       ),
     );
 
@@ -125,22 +130,20 @@ async function onSiegeUpdatesCallback(
   }
 
   const { attackingEmpire, defendingEmpire, tower } = getContextRequest.data;
-
-  const sign = (n: number) => (n > 0 ? `+${n}` : n.toString());
   const builder = new ContainerBuilder()
     .setAccentColor(0xf05a4f)
     .addTextDisplayComponents((c) =>
       c.setContent(
-        `### Siege update: ${attackingEmpire?.Name ?? "Unknown empire"} vs ${defendingEmpire?.Name ?? "Unknown empire"}`,
+        `### Siege update: ${attackingEmpire?.Name ?? DEFAULT_NAME} vs ${defendingEmpire?.Name ?? DEFAULT_NAME}`,
       ),
     )
     .addSeparatorComponents((s) => s)
     .addTextDisplayComponents((c) =>
       c.setContent(
-        attackingEmpire && defendingEmpire
-          ? `⚔️ ${attackingEmpire.Name}'s siege has ${finalAmount} energy (${sign(delta)})
-🏰 ${defendingEmpire.Name}'s tower has ${tower?.Energy ?? "n/a"} energy remaining`
-          : "Data missing",
+        `⚔️ ${attackingEmpire?.Name ?? DEFAULT_NAME}'s siege has ${finalAmount} energy (${sign(delta)})
+🏰 ${defendingEmpire?.Name ?? DEFAULT_NAME}'s tower has ${tower?.Energy ?? "n/a"} energy remaining
+
+-# ${tower ? generateMapUrl(tower?.LocationX, tower?.LocationZ, "Tower under siege") : "sorry dunno where the tower is"}`,
       ),
     );
 
@@ -172,22 +175,33 @@ export async function onEmpireNodeSiegeStateDeleted(
   }
 
   const { attackingEmpire, defendingEmpire, tower } = getContextRequest.data;
+
+  let outcomeMessage = "unknown";
+  if (tower && (attackingEmpire || defendingEmpire)) {
+    if (
+      tower.EmpireId === attackingEmpire?.Id ||
+      tower.EmpireId !== (defendingEmpire?.Id ?? -1)
+    ) {
+      outcomeMessage = "✅ Siege successful, tower taken by attacker!";
+    } else {
+      outcomeMessage = "❌ The attack was successfully defended!";
+    }
+  }
+
   const builder = new ContainerBuilder()
     .setAccentColor(0xf05a4f)
     .addTextDisplayComponents((c) =>
       c.setContent(
-        `## Siege by ${attackingEmpire?.Name ?? "Unknown empire"} on ${defendingEmpire?.Name ?? "Unknown empire"} has ended`,
+        `## Siege by ${attackingEmpire?.Name ?? DEFAULT_NAME} on ${defendingEmpire?.Name ?? DEFAULT_NAME} has ended`,
       ),
     )
     .addSeparatorComponents((s) => s)
     .addTextDisplayComponents((c) =>
       c.setContent(
-        attackingEmpire && defendingEmpire
-          ? `⚔️ ${attackingEmpire.Name} has ${attackingEmpire.ShardTreasury} shards
-🛡️ ${defendingEmpire.Name} has ${defendingEmpire.ShardTreasury} shards
+        `⚔️ ${attackingEmpire?.Name ?? DEFAULT_NAME} has ${attackingEmpire?.ShardTreasury ?? "n/a"} shards
+🛡️ ${defendingEmpire?.Name ?? DEFAULT_NAME} has ${defendingEmpire?.ShardTreasury ?? "n/a"} shards
 
-🏰 The defending tower has ${tower?.Energy ?? "n/a"} energy`
-          : "Data missing",
+${outcomeMessage}`,
       ),
     );
 
