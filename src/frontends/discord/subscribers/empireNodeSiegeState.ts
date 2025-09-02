@@ -58,7 +58,7 @@ export async function onEmpireNodeSiegeStateAdded(
 
 🏰 The defending tower has ${tower?.Energy ?? "n/a"} energy
 
--# ${tower ? generateMapUrl(tower?.LocationX, tower?.LocationZ, "Tower under siege") : "sorry dunno where the tower is"}
+-# ${tower ? `[bitcraftmap.com](${generateMapUrl(tower?.LocationX, tower?.LocationZ, "Tower under siege")})` : "sorry dunno where the tower is"}
 `,
       ),
     );

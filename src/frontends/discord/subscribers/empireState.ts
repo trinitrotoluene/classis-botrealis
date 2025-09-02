@@ -47,17 +47,26 @@ export async function aggregateCallback(
   const allChanges = events.map((x) => x.newAmount - x.oldAmount);
 
   const totalChange = allChanges.reduce((acc, n) => acc + n, 0);
+
+  const totalWithdrawals = allChanges
+    .filter((x) => x < 0)
+    .reduce((acc, n) => acc + n, 0);
+  const totalDeposits = allChanges
+    .filter((x) => x >= 0)
+    .reduce((acc, n) => acc + n, 0);
+
   const builder = new ContainerBuilder()
     .setAccentColor(0xd9427e)
     .addTextDisplayComponents((c) =>
       c.setContent(
-        `## ${events[0].Name} treasury updated (${sign(totalChange)})`,
+        `## ${events[0].Name} treasury updated (${sign(totalChange)}`,
       ),
     )
     .addSeparatorComponents((s) => s)
     .addTextDisplayComponents((c) =>
       c.setContent(
-        `💰 ${events.slice(-1)[0]?.newAmount ?? "n/a"} shards remaining`,
+        `💰 ${events.slice(-1)[0]?.newAmount ?? "n/a"} shards remaining
+-# added ${sign(totalWithdrawals)}, withdrew ${sign(totalDeposits)}`,
       ),
     );
 
