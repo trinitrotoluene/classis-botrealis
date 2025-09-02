@@ -14,9 +14,5 @@
       "type": "string"
     }
   },
-  "required": [
-    "Name",
-    "Description",
-    "Id"
-  ]
+  "required": ["Name", "Description", "Id"]
 }

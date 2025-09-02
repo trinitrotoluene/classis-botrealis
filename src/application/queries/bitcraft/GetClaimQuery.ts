@@ -17,7 +17,7 @@ export default class GetClaimQuery extends CommandBase<
   async execute() {
     const claim = await CacheClient.getByIdGlobal(
       "BitcraftClaimState",
-      this.args.claimId
+      this.args.claimId,
     );
     if (claim) {
       return {

@@ -90,7 +90,7 @@ export default class UpdateServerConfigCommand extends CommandBase<Args, void> {
 
     if (this.args.addFeatures || this.args.removeFeatures) {
       const currentFeatures = new Set<ServerFeature>(
-        existing?.features_enabled ?? []
+        existing?.features_enabled ?? [],
       );
 
       for (const featureToRemove of this.args.removeFeatures ?? []) {

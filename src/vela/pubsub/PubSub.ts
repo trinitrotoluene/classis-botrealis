@@ -50,7 +50,7 @@ export class PubSubImpl {
 
   async subscribe<TChannel extends TRedisChannels>(
     channel: TChannel,
-    handler: SubscriberHandler<TChannel>
+    handler: SubscriberHandler<TChannel>,
   ) {
     logger.info(`Registered subscriber for channel ${channel}`);
     this._subscribers.set(channel, handler);

@@ -52,7 +52,7 @@ export default class UpsertRecipesFromCacheCommand extends CommandBase<
             produced_item_stacks: eb.ref("excluded.produced_item_stacks"),
             is_passive: eb.ref("excluded.is_passive"),
             actions_required: eb.ref("excluded.actions_required"),
-          }))
+          })),
         )
         .execute();
     }

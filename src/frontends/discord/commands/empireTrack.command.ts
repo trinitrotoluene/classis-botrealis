@@ -22,11 +22,11 @@ export const data = new SlashCommandBuilder()
     s
       .setName("start")
       .setDescription(
-        "Create a thread logging empire updates in the channel you run this command in"
-      )
+        "Create a thread logging empire updates in the channel you run this command in",
+      ),
   )
   .addSubcommand((s) =>
-    s.setName("stop").setDescription("Stop notifying for empire updates")
+    s.setName("stop").setDescription("Stop notifying for empire updates"),
   )
   .addSubcommand((s) =>
     s
@@ -37,8 +37,8 @@ export const data = new SlashCommandBuilder()
           .setName("empire")
           .setDescription("The name of the target empire")
           .setRequired(true)
-          .setAutocomplete(true)
-      )
+          .setAutocomplete(true),
+      ),
   )
   .addSubcommand((s) =>
     s
@@ -49,8 +49,8 @@ export const data = new SlashCommandBuilder()
           .setName("empire")
           .setDescription("The name of the target empire")
           .setRequired(true)
-          .setAutocomplete(true)
-      )
+          .setAutocomplete(true),
+      ),
   );
 
 const { registerSubCommand, ...command } = commandDefinition();
@@ -87,7 +87,7 @@ registerSubCommand("start", {
       new UpdateServerConfigCommand({
         serverId: i.guildId,
         observingEmpireLogsThreadId: thread.id,
-      })
+      }),
     );
 
     if (!result.ok) {
@@ -127,7 +127,7 @@ registerSubCommand("stop", {
       new UpdateServerConfigCommand({
         serverId: i.guildId,
         observingEmpireLogsThreadId: null,
-      })
+      }),
     );
 
     if (result.ok) {
@@ -149,7 +149,7 @@ registerSubCommand("watch", {
   async autocomplete(i) {
     const empire = i.options.getString("empire");
     const searchResult = await QueryBus.execute(
-      new GetEmpiresQuery({ searchText: empire ?? "" })
+      new GetEmpiresQuery({ searchText: empire ?? "" }),
     );
 
     await i.respond(
@@ -161,7 +161,7 @@ registerSubCommand("watch", {
               value: x.id,
             })),
           ]
-        : []
+        : [],
     );
   },
   async execute(i) {
@@ -188,7 +188,7 @@ registerSubCommand("watch", {
       new UpdateServerConfigCommand({
         serverId: i.guildId,
         addObservedEmpires: empire ? [empire] : undefined,
-      })
+      }),
     );
 
     if (!result.ok) {
@@ -209,7 +209,7 @@ registerSubCommand("unwatch", {
   async autocomplete(i) {
     const empire = i.options.getString("empire");
     const searchResult = await QueryBus.execute(
-      new GetEmpiresQuery({ searchText: empire ?? "" })
+      new GetEmpiresQuery({ searchText: empire ?? "" }),
     );
 
     await i.respond(
@@ -221,7 +221,7 @@ registerSubCommand("unwatch", {
               value: x.id,
             })),
           ]
-        : []
+        : [],
     );
   },
   async execute(i) {
@@ -248,7 +248,7 @@ registerSubCommand("unwatch", {
       new UpdateServerConfigCommand({
         serverId: i.guildId,
         removeObservedEmpires: empire ? [empire] : undefined,
-      })
+      }),
     );
 
     if (!result.ok) {

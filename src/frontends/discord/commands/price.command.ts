@@ -21,8 +21,8 @@ export const data = new SlashCommandBuilder()
           .setName("item")
           .setDescription("The item to search")
           .setAutocomplete(true)
-          .setRequired(true)
-      )
+          .setRequired(true),
+      ),
   );
 
 const { registerSubCommand, ...command } = commandDefinition();
@@ -36,7 +36,7 @@ registerSubCommand("check", {
       new SearchItemsQuery({
         name: queryText,
         hasCompendiumEntry: true,
-      })
+      }),
     );
 
     if (result.ok) {
@@ -47,7 +47,7 @@ registerSubCommand("check", {
           .map((item) => ({
             name: `[T${item.tier}] ${item.name} - ${item.rarity}`,
             value: item.id,
-          }))
+          })),
       );
     }
   },
@@ -61,7 +61,7 @@ registerSubCommand("check", {
     const itemId = value?.toString() ?? "";
     const itemResult = await QueryBus.execute(new GetItemQuery({ id: itemId }));
     const priceResult = await QueryBus.execute(
-      new GetPriceInformationQuery({ id: itemId })
+      new GetPriceInformationQuery({ id: itemId }),
     );
 
     if (!priceResult.ok || !itemResult.ok) {
@@ -80,11 +80,11 @@ registerSubCommand("check", {
       .setAccentColor(0xd9427e)
       .addTextDisplayComponents((c) =>
         c.setContent(
-          `## ${itemResult.data ? `[T${itemResult.data.tier}] ${itemResult.data.name} - ${itemResult.data.rarity}` : "n/a"}`
-        )
+          `## ${itemResult.data ? `[T${itemResult.data.tier}] ${itemResult.data.name} - ${itemResult.data.rarity}` : "n/a"}`,
+        ),
       )
       .addTextDisplayComponents((c) =>
-        c.setContent(`-# ${itemResult.data?.description ?? "n/a"}`)
+        c.setContent(`-# ${itemResult.data?.description ?? "n/a"}`),
       )
       .addSeparatorComponents((s) => s)
       .addTextDisplayComponents((t) =>
@@ -96,8 +96,8 @@ registerSubCommand("check", {
             `Highest price   : ${buy?.highestPrice ?? "n/a"}`,
             `Lowest price    : ${buy?.lowestPrice ?? "n/a"}`,
             "```",
-          ].join("\n")
-        )
+          ].join("\n"),
+        ),
       )
       .addTextDisplayComponents((t) =>
         t.setContent(
@@ -108,8 +108,8 @@ registerSubCommand("check", {
             `Highest price   : ${sell?.highestPrice ?? "n/a"}`,
             `Lowest price    : ${sell?.lowestPrice ?? "n/a"}`,
             "```",
-          ].join("\n")
-        )
+          ].join("\n"),
+        ),
       );
 
     await i.reply({

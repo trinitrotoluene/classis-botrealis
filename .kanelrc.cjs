@@ -9,11 +9,11 @@ const customisedPostRenderHook = (path, lines) => {
     lines.splice(
       exportLine,
       1,
-      lines[exportLine].replace("type", "export type")
+      lines[exportLine].replace("type", "export type"),
     );
 
     const defaultExportLine = lines.findIndex((l) =>
-      l.startsWith("export default")
+      l.startsWith("export default"),
     );
     lines.splice(defaultExportLine, 1);
   }

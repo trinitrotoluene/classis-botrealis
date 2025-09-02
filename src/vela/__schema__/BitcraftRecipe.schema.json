@@ -5,10 +5,7 @@
       "type": "string"
     },
     "BuildingRequirement": {
-      "type": [
-        "object",
-        "null"
-      ],
+      "type": ["object", "null"],
       "properties": {
         "BuildingType": {
           "type": "integer"
@@ -17,10 +14,7 @@
           "type": "integer"
         }
       },
-      "required": [
-        "BuildingType",
-        "Tier"
-      ]
+      "required": ["BuildingType", "Tier"]
     },
     "LevelRequirements": {
       "type": "array",
@@ -34,10 +28,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "SkillId",
-          "Level"
-        ]
+        "required": ["SkillId", "Level"]
       }
     },
     "ToolRequirements": {
@@ -52,10 +43,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "ToolType",
-          "Level"
-        ]
+        "required": ["ToolType", "Level"]
       }
     },
     "ConsumedItemStacks": {
@@ -70,10 +58,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "ItemId",
-          "Quantity"
-        ]
+        "required": ["ItemId", "Quantity"]
       }
     },
     "ProducedItemStacks": {

@@ -1,8 +1,8 @@
 export interface IOrderMetadata {
-  id: string
-  itemId: string
-  price: number
-  quantity: number
+  id: string;
+  itemId: string;
+  price: number;
+  quantity: number;
 }
 /**
  * This type maintains a list of orders sorted by price, lowest first.

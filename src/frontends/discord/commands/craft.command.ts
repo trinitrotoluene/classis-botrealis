@@ -19,41 +19,41 @@ export const data = new SlashCommandBuilder()
     s
       .setName("check")
       .setDescription(
-        "See if you can make something using items currently deposited in your claim's barter stalls"
+        "See if you can make something using items currently deposited in your claim's barter stalls",
       )
       .addStringOption((s) =>
         s
           .setName("item")
           .setDescription("The item to search")
           .setAutocomplete(true)
-          .setRequired(true)
+          .setRequired(true),
       )
       .addNumberOption((s) =>
         s
           .setName("quantity")
           .setDescription(
-            "The amount of this item you want to craft - defaults to 1"
-          )
+            "The amount of this item you want to craft - defaults to 1",
+          ),
       )
       .addNumberOption((s) =>
         s
           .setName("depth")
-          .setDescription("How many items deep should the recipe be rendered?")
+          .setDescription("How many items deep should the recipe be rendered?"),
       )
       .addNumberOption((s) =>
         s
           .setName("tier")
           .setDescription(
-            "Set this option if you want to filter a recipe to only show a specific tier of items required"
-          )
+            "Set this option if you want to filter a recipe to only show a specific tier of items required",
+          ),
       )
       .addStringOption((s) =>
         s
           .setName("item_name")
           .setDescription(
-            "Only show recipe ingredients matching the provided regular expression"
-          )
-      )
+            "Only show recipe ingredients matching the provided regular expression",
+          ),
+      ),
   );
 
 const { registerSubCommand, ...command } = commandDefinition();
@@ -67,7 +67,7 @@ registerSubCommand("check", {
       new SearchItemsQuery({
         name: queryText,
         hasCompendiumEntry: true,
-      })
+      }),
     );
 
     if (result.ok) {
@@ -78,7 +78,7 @@ registerSubCommand("check", {
           .map((item) => ({
             name: `[T${item.tier}] ${item.name} - ${item.rarity}`,
             value: item.id,
-          }))
+          })),
       );
     }
   },
@@ -98,11 +98,11 @@ registerSubCommand("check", {
     const itemId = value?.toString() ?? "";
 
     const recipeResult = await QueryBus.execute(
-      new GetItemRecipeQuery({ itemId: itemId, quantity: quantity })
+      new GetItemRecipeQuery({ itemId: itemId, quantity: quantity }),
     );
 
     const serverConfigResult = await QueryBus.execute(
-      new GetServerConfigQuery({ serverId: i.guildId ?? "0" })
+      new GetServerConfigQuery({ serverId: i.guildId ?? "0" }),
     );
 
     const inventoryResult = await QueryBus.execute(
@@ -110,7 +110,7 @@ registerSubCommand("check", {
         claimId: serverConfigResult.ok
           ? (serverConfigResult.data.linkedClaimId ?? "0")
           : "0",
-      })
+      }),
     );
 
     if (!recipeResult.ok || !inventoryResult.ok) {
@@ -141,20 +141,20 @@ registerSubCommand("check", {
       renderedRecipeMap,
       recipeResult.data.recipe,
       inventoryResult.data,
-      lens
+      lens,
     );
 
     const builder = new ContainerBuilder()
       .setAccentColor(0xd9427e)
       .addTextDisplayComponents((c) =>
         c.setContent(
-          `## ${recipeResult.data ? `[T${recipeResult.data.recipe.item?.tier}] ${recipeResult.data.recipe.item?.name}` : "n/a"}`
-        )
+          `## ${recipeResult.data ? `[T${recipeResult.data.recipe.item?.tier}] ${recipeResult.data.recipe.item?.name}` : "n/a"}`,
+        ),
       )
       .addTextDisplayComponents((c) =>
         c.setContent(
-          `-# Crafting ${recipeResult.data.recipe.quantity} of this item`
-        )
+          `-# Crafting ${recipeResult.data.recipe.quantity} of this item`,
+        ),
       )
       .addSeparatorComponents((s) => s)
       .addTextDisplayComponents((t) =>
@@ -165,13 +165,13 @@ registerSubCommand("check", {
               .values()
               .map(
                 (x) =>
-                  `T${x.item.tier} ${x.item.name} ${x.consumed}/${x.required}`
+                  `T${x.item.tier} ${x.item.name} ${x.consumed}/${x.required}`,
               ),
             "```",
           ]
             .join("\n")
-            .slice(0, 3800)
-        )
+            .slice(0, 3800),
+        ),
       );
 
     await i.reply({
@@ -198,7 +198,7 @@ function renderFlattenedRecipeList(
   >,
   recipe: IRecipeNode,
   inventoryMap: Map<string, number>,
-  lens: ILensOptions
+  lens: ILensOptions,
 ) {
   if (!recipe.item) {
     return;

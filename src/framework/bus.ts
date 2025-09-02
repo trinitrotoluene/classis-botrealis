@@ -12,7 +12,7 @@ export class CommandBusImpl {
     TCommandResult,
     TCommand extends CommandBase<object, TCommandResult>,
   >(
-    command: TCommand
+    command: TCommand,
   ): Promise<TResult<Awaited<ReturnType<TCommand["execute"]>>>> {
     try {
       logger.info(`Executing ${command}`);
@@ -21,7 +21,7 @@ export class CommandBusImpl {
       logger.info("OK");
 
       return new SuccessResult(
-        result as Awaited<ReturnType<TCommand["execute"]>>
+        result as Awaited<ReturnType<TCommand["execute"]>>,
       );
       // eslint-disable-next-line
     } catch (error: any) {
@@ -35,7 +35,7 @@ export class CommandBusImpl {
       return new GenericError(
         process.env.ENV === "local"
           ? error.message
-          : "An unknown error occurred"
+          : "An unknown error occurred",
       );
     }
   }

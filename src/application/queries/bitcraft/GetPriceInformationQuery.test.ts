@@ -103,7 +103,7 @@ describe("GetPriceInformationQuery", () => {
           price: 10 + (k % 10),
           quantity: 2 + (k % 20),
         }))
-        .toArray()
+        .toArray(),
     );
 
     getSellsSpy.mockReturnValue(
@@ -113,7 +113,7 @@ describe("GetPriceInformationQuery", () => {
           price: 15 + (k % 10),
           quantity: 3 + (k % 20),
         }))
-        .toArray()
+        .toArray(),
     );
 
     const command = new GetPriceInformationQuery({ id: "1" });

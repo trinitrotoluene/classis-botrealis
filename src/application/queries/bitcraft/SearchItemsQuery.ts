@@ -28,7 +28,7 @@ export default class SearchItemsQuery extends CommandBase<Args, Response> {
         "is",
         this.args.hasCompendiumEntry === undefined
           ? true
-          : this.args.hasCompendiumEntry
+          : this.args.hasCompendiumEntry,
       );
     }
 

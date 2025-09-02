@@ -47,7 +47,7 @@ export default class UpsertItemsFromCacheCommand extends CommandBase<
             rarity: eb.ref("excluded.rarity"),
             item_list_id: eb.ref("excluded.item_list_id"),
             has_compendium_entry: eb.ref("excluded.has_compendium_entry"),
-          }))
+          })),
         )
         .execute();
     }

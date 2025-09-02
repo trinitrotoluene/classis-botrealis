@@ -28,16 +28,16 @@ export const data = new SlashCommandBuilder()
           .setName("name")
           .setDescription("The name of the claim")
           .setRequired(true)
-          .setAutocomplete(true)
-      )
+          .setAutocomplete(true),
+      ),
   )
   .addSubcommand((s) =>
     s
       .setName("unset")
-      .setDescription("Unset the claim the server is currently linked with")
+      .setDescription("Unset the claim the server is currently linked with"),
   )
   .addSubcommand((s) =>
-    s.setName("view").setDescription("View the claim you have configured")
+    s.setName("view").setDescription("View the claim you have configured"),
   );
 
 const { registerSubCommand, ...command } = commandDefinition();
@@ -58,7 +58,7 @@ registerSubCommand("view", {
     const queryResult = await QueryBus.execute(
       new GetServerConfigQuery({
         serverId: i.guildId,
-      })
+      }),
     );
 
     if (!queryResult.ok) {
@@ -73,19 +73,19 @@ registerSubCommand("view", {
     const { linkedClaimId } = queryResult.data;
 
     const getClaimQuery = await QueryBus.execute(
-      new GetClaimQuery({ claimId: linkedClaimId ?? "" })
+      new GetClaimQuery({ claimId: linkedClaimId ?? "" }),
     );
 
     const header = new TextDisplayBuilder().setContent("**Configured claim**");
 
     const spacer = new SeparatorBuilder().setSpacing(
-      SeparatorSpacingSize.Small
+      SeparatorSpacingSize.Small,
     );
 
     const body = new TextDisplayBuilder().setContent(
       linkedClaimId
         ? `Your server is linked with the claim ${getClaimQuery.ok ? (getClaimQuery.data?.name ?? linkedClaimId) : linkedClaimId}`
-        : "Your server is not currently linked with a claim"
+        : "Your server is not currently linked with a claim",
     );
 
     await i.reply({
@@ -101,14 +101,14 @@ registerSubCommand("configure", {
     const result = await QueryBus.execute(
       new SearchClaimsQuery({
         claimName: focusedInput,
-      })
+      }),
     );
     if (result.ok) {
       i.respond(
         result.data.results.map((x) => ({
           name: x.name,
           value: x.entityId,
-        }))
+        })),
       );
     }
   },
@@ -124,7 +124,7 @@ registerSubCommand("configure", {
 
     const selectedClaimId = i.options.getString("name");
     const claim = await QueryBus.execute(
-      new GetClaimQuery({ claimId: selectedClaimId ?? "" })
+      new GetClaimQuery({ claimId: selectedClaimId ?? "" }),
     );
 
     if (!claim.ok || !claim.data) {
@@ -140,7 +140,7 @@ registerSubCommand("configure", {
       new UpdateServerConfigCommand({
         serverId: i.guildId,
         claimId: claim.data.entityId.toString(),
-      })
+      }),
     );
 
     if (!result.ok) {
@@ -172,7 +172,7 @@ registerSubCommand("unset", {
       new UpdateServerConfigCommand({
         serverId: i.guildId,
         claimId: null,
-      })
+      }),
     );
 
     if (result.ok) {

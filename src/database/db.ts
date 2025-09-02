@@ -61,7 +61,7 @@ export async function setupEnumArrayParsers() {
 
       pgTypes.setTypeParser(oid, parsePgArray.parse);
       logger.info(
-        `Registered array parser for enum array type '${name}' (OID: ${oid})`
+        `Registered array parser for enum array type '${name}' (OID: ${oid})`,
       );
     }
   } finally {

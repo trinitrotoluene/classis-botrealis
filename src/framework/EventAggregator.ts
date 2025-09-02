@@ -14,7 +14,7 @@ export class EventAggregator<TEvent> {
     id: string,
     event: TEvent,
     callback: (events: TEvent[]) => void | Promise<void>,
-    delaySeconds = 10
+    delaySeconds = 10,
   ) {
     let bucket = this.buckets.get(id);
     if (!bucket) {

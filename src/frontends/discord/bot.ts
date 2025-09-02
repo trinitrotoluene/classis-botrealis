@@ -39,46 +39,43 @@ DiscordBot.on(Events.ClientReady, async (client) => {
 
   PubSub.subscribe(
     "bitcraft.BitcraftChatMessage.insert",
-    onBitcraftChatMessage
+    onBitcraftChatMessage,
   );
 
   PubSub.subscribe(
     "bitcraft.BitcraftUserModerationState.insert",
-    onBitcraftUserModerated
+    onBitcraftUserModerated,
   );
 
-  PubSub.subscribe(
-    "bitcraft.BitcraftEmpireState.update",
-    onEmpireStateUpdated
-  );
+  PubSub.subscribe("bitcraft.BitcraftEmpireState.update", onEmpireStateUpdated);
 
   PubSub.subscribe(
     "bitcraft.BitcraftPublicProgressiveAction.insert",
-    onSharedCraftInserted
+    onSharedCraftInserted,
   );
   PubSub.subscribe(
     "bitcraft.BitcraftPublicProgressiveAction.delete",
-    onSharedCraftDeleted
+    onSharedCraftDeleted,
   );
 
   PubSub.subscribe(
     "bitcraft.BitcraftAuctionListingState.insert",
-    onAuctionListingStateInserted
+    onAuctionListingStateInserted,
   );
   PubSub.subscribe(
     "bitcraft.BitcraftAuctionListingState.update",
-    onAuctionListingStateUpdated
+    onAuctionListingStateUpdated,
   );
   PubSub.subscribe(
     "bitcraft.BitcraftAuctionListingState.delete",
-    onAuctionListingStateDeleted
+    onAuctionListingStateDeleted,
   );
 });
 
 DiscordBot.on(Events.GuildAvailable, (guild) => {
   logger.info(
     { guildId: guild.id },
-    `Guild available: ${guild.name} (${guild.id})`
+    `Guild available: ${guild.name} (${guild.id})`,
   );
 });
 
@@ -98,7 +95,7 @@ DiscordBot.on(Events.InteractionCreate, async (interaction) => {
   if (!command.autocomplete) {
     logger.warn(
       { commandName: interaction.commandName },
-      "Command does not support autocomplete"
+      "Command does not support autocomplete",
     );
     return;
   }
@@ -108,7 +105,7 @@ DiscordBot.on(Events.InteractionCreate, async (interaction) => {
   } catch (error) {
     logger.error(
       { error, commandName: interaction.commandName },
-      "Error executing autocomplete"
+      "Error executing autocomplete",
     );
   }
 });
@@ -140,7 +137,7 @@ DiscordBot.on(Events.InteractionCreate, async (interaction) => {
     }
 
     const enabledFeatures = await QueryBus.execute(
-      new GetEnabledFeaturesQuery({ serverId: interaction.guildId })
+      new GetEnabledFeaturesQuery({ serverId: interaction.guildId }),
     );
 
     if (!enabledFeatures.ok) {
@@ -175,7 +172,7 @@ DiscordBot.on(Events.InteractionCreate, async (interaction) => {
         requiredPermissions: command.requiredPermissions,
         interactionPermissions: interaction.memberPermissions,
       },
-      "command permissions out of sync"
+      "command permissions out of sync",
     );
 
     return;
@@ -192,7 +189,7 @@ DiscordBot.on(Events.InteractionCreate, async (interaction) => {
         userId: interaction.user?.id,
         username: interaction.user?.username,
       },
-      "executing slash command"
+      "executing slash command",
     );
 
     if (
@@ -207,7 +204,7 @@ DiscordBot.on(Events.InteractionCreate, async (interaction) => {
   } catch (error) {
     logger.error(
       { error, commandName: interaction.commandName },
-      "Error executing command"
+      "Error executing command",
     );
 
     if (interaction.replied || interaction.deferred) {

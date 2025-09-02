@@ -14,7 +14,7 @@ export class ValidationError extends ErrorResult {
   readonly type = "validation_error";
   constructor(
     message: string,
-    public fieldErrors: Array<{ path: string; message: string }>
+    public fieldErrors: Array<{ path: string; message: string }>,
   ) {
     super(message);
   }
@@ -24,7 +24,7 @@ export class NotFoundError extends ErrorResult {
   readonly type = "not_found";
   constructor(
     message: string,
-    public entityId?: string
+    public entityId?: string,
   ) {
     super(message);
   }

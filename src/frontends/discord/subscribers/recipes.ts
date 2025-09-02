@@ -9,7 +9,7 @@ export async function onRecipeInserted(recipe: BitcraftRecipe) {
 
 export async function onRecipeUpdated(
   _oldRecipe: BitcraftRecipe,
-  newRecipe: BitcraftRecipe
+  newRecipe: BitcraftRecipe,
 ) {
   await CommandBus.execute(new UpsertRecipeCommand(newRecipe));
 }

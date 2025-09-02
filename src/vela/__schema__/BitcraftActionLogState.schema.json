@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "properties": {
+    "SubjectEntityId": {
+      "type": "string"
+    },
+    "SubjectName": {
+      "type": "string"
+    },
+    "SubjectType": {
+      "enum": ["player"]
+    },
+    "ObjectEntityId": {
+      "type": "string"
+    },
+    "Action": {
+      "type": "object"
+    },
+    "Id": {
+      "type": "string"
+    },
+    "Module": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "SubjectEntityId",
+    "SubjectName",
+    "SubjectType",
+    "ObjectEntityId",
+    "Action",
+    "Id"
+  ]
+}

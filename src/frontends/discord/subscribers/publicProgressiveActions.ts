@@ -12,10 +12,10 @@ const CraftAnnouncedSet = new Map<
 >();
 
 export async function onSharedCraftInserted(
-  event: BitcraftPublicProgressiveAction
+  event: BitcraftPublicProgressiveAction,
 ) {
   const sharedCraftResult = await QueryBus.execute(
-    new GetPublicCraftQuery(event)
+    new GetPublicCraftQuery(event),
   );
 
   if (!sharedCraftResult.ok || !sharedCraftResult.data) {
@@ -26,7 +26,7 @@ export async function onSharedCraftInserted(
     sharedCraftResult.data;
 
   const serversToNotify = await QueryBus.execute(
-    new GetAllSharedCraftThreadsQuery({})
+    new GetAllSharedCraftThreadsQuery({}),
   );
 
   if (!serversToNotify.ok) {
@@ -65,7 +65,7 @@ export async function onSharedCraftInserted(
   const builder = new ContainerBuilder()
     .setAccentColor(0xd9427e)
     .addTextDisplayComponents((c) =>
-      c.setContent(formatProducedItem(producedItems[0]))
+      c.setContent(formatProducedItem(producedItems[0])),
     )
     .addSeparatorComponents((s) => s)
     .addTextDisplayComponents((c) =>
@@ -75,17 +75,17 @@ User     : ${user?.Username ?? "n/a"}
 
 (${progress}/${effort})
 \`\`\`
-`)
+`),
     )
     .addSeparatorComponents((s) => s)
     .addTextDisplayComponents((c) =>
-      c.setContent(mapUrl ? `[bitcraftmap.com](${mapUrl})` : "n/a")
+      c.setContent(mapUrl ? `[bitcraftmap.com](${mapUrl})` : "n/a"),
     );
 
   const results = await Promise.allSettled(
     serversToNotify.data.results.map((x) =>
-      DiscordBot.channels.fetch(x.threadId)
-    )
+      DiscordBot.channels.fetch(x.threadId),
+    ),
   );
 
   await Promise.all(
@@ -101,12 +101,12 @@ User     : ${user?.Username ?? "n/a"}
           flags: MessageFlags.IsComponentsV2,
         });
       }
-    })
+    }),
   );
 }
 
 export async function onSharedCraftDeleted(
-  event: BitcraftPublicProgressiveAction
+  event: BitcraftPublicProgressiveAction,
 ) {
   const context = CraftAnnouncedSet.get(event.Id);
   if (!context) {
@@ -120,13 +120,13 @@ export async function onSharedCraftDeleted(
           Routes.channelMessageOwnReaction(
             channelId,
             messageId,
-            encodeURIComponent("❌")
-          )
+            encodeURIComponent("❌"),
+          ),
         );
       } catch (err) {
         // We don't really care if this fails
         logger.error(err, "error reacting to message");
       }
-    })
+    }),
   );
 }

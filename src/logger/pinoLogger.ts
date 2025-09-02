@@ -27,7 +27,7 @@ const transport = isProd
 function truncateArrays(
   input: unknown,
   maxLength = 25,
-  seen = new WeakSet()
+  seen = new WeakSet(),
 ): unknown {
   if (Array.isArray(input)) {
     return input
@@ -64,5 +64,5 @@ export const logger = pino(
       },
     },
   },
-  transport
+  transport,
 );

@@ -9,7 +9,7 @@ export async function onItemInserted(item: BitcraftItem) {
 
 export async function onItemUpdated(
   _oldItem: BitcraftItem,
-  newItem: BitcraftItem
+  newItem: BitcraftItem,
 ) {
   await CommandBus.execute(new UpsertItemCommand(newItem));
 }

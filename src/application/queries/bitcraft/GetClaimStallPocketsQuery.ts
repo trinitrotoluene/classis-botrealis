@@ -13,12 +13,12 @@ export default class GetClaimStallPocketsQuery extends CommandBase<
   async execute() {
     const claim = await CacheClient.getByIdGlobal(
       "BitcraftClaimState",
-      this.args.claimId
+      this.args.claimId,
     );
 
     const buildingState = await CacheClient.getAll(
       "BitcraftBuildingState",
-      claim?.Module
+      claim?.Module,
     );
 
     const inventoryStates = await Promise.all(
@@ -29,9 +29,9 @@ export default class GetClaimStallPocketsQuery extends CommandBase<
           CacheClient.getById(
             "BitcraftInventoryState",
             claim?.Module,
-            x.ClaimEntityId
-          )
-        )
+            x.ClaimEntityId,
+          ),
+        ),
     );
 
     return inventoryStates.reduce((acc, current) => {

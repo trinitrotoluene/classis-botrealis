@@ -24,7 +24,7 @@ export default class GetAllEmpireObservationThreadsQuery extends CommandBase<
       .selectAll()
       .where("observing_empire_logs_thread_id", "is not", null)
       .where(
-        sql<boolean>`${this.args.empireId} = ANY(observing_empire_ids) OR '*' = ANY(observing_empire_ids)`
+        sql<boolean>`${this.args.empireId} = ANY(observing_empire_ids) OR '*' = ANY(observing_empire_ids)`,
       )
       .execute();
 

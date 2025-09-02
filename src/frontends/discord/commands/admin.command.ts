@@ -18,20 +18,20 @@ export const data = new SlashCommandBuilder()
           .setName("server")
           .setDescription("The server to enable the feature in")
           .setRequired(true)
-          .setAutocomplete(true)
+          .setAutocomplete(true),
       )
       .addStringOption((o) =>
         o
           .setName("grant")
           .setDescription("The key of the feature to enable")
-          .setAutocomplete(true)
+          .setAutocomplete(true),
       )
       .addStringOption((o) =>
         o
           .setName("revoke")
           .setDescription("The key of the feature to enable")
-          .setAutocomplete(true)
-      )
+          .setAutocomplete(true),
+      ),
   );
 
 const { registerSubCommand, ...command } = commandDefinition();
@@ -48,19 +48,19 @@ registerSubCommand("feature", {
           i.client.guilds.cache
             .values()
             .filter((x) =>
-              x.name.toLowerCase().includes(option.value.toLowerCase())
+              x.name.toLowerCase().includes(option.value.toLowerCase()),
             )
             .map((x) => ({
               name: x.name,
               value: x.id,
             }))
-            .toArray()
+            .toArray(),
         );
         return;
       case "grant":
       case "revoke":
         await i.respond(
-          Object.values(ServerFeature).map((x) => ({ name: x, value: x }))
+          Object.values(ServerFeature).map((x) => ({ name: x, value: x })),
         );
         return;
     }
@@ -74,7 +74,7 @@ registerSubCommand("feature", {
         serverId: i.options.getString("server", true),
         addFeatures: grant ? [grant] : undefined,
         removeFeatures: revoke ? [revoke] : undefined,
-      })
+      }),
     );
 
     if (!result.ok) {

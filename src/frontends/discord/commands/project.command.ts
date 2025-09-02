@@ -15,11 +15,11 @@ export const data = new SlashCommandBuilder()
         o
           .setName("name")
           .setDescription("What should the project be called?")
-          .setRequired(true)
-      )
+          .setRequired(true),
+      ),
   )
   .addSubcommand((s) =>
-    s.setName("list").setDescription("List all active Bitcraft projects")
+    s.setName("list").setDescription("List all active Bitcraft projects"),
   )
   .addSubcommand((s) =>
     s
@@ -30,8 +30,8 @@ export const data = new SlashCommandBuilder()
           .setName("name")
           .setDescription("What is the name of the project to close?")
           .setRequired(true)
-          .setAutocomplete(true)
-      )
+          .setAutocomplete(true),
+      ),
   )
   .addSubcommand((s) =>
     s
@@ -41,18 +41,18 @@ export const data = new SlashCommandBuilder()
         o
           .setName("name")
           .setDescription(
-            "What is the name of the project to add a resource to?"
+            "What is the name of the project to add a resource to?",
           )
           .setRequired(true)
-          .setAutocomplete(true)
+          .setAutocomplete(true),
       )
       .addStringOption((o) =>
         o
           .setName("resource")
           .setDescription("What is the resource to add?")
           .setRequired(true)
-          .setAutocomplete(true)
-      )
+          .setAutocomplete(true),
+      ),
   )
   .addSubcommand((s) =>
     s
@@ -62,11 +62,11 @@ export const data = new SlashCommandBuilder()
         o
           .setName("name")
           .setDescription(
-            "What is the name of the project to create a thread for?"
+            "What is the name of the project to create a thread for?",
           )
           .setRequired(true)
-          .setAutocomplete(true)
-      )
+          .setAutocomplete(true),
+      ),
   );
 
 const { registerSubCommand, ...command } = commandDefinition();
@@ -79,7 +79,7 @@ registerSubCommand("list", {
       ["cool project 1", "cool project 2"].map((name) => ({
         name,
         value: name,
-      }))
+      })),
     );
   },
 });

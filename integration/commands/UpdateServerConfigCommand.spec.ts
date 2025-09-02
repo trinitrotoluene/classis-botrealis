@@ -193,7 +193,7 @@ describe("UpdateServerConfigCommand", () => {
           [dbKey]: "cool-value",
         }),
       ]);
-    }
+    },
   );
 
   it.each([
@@ -234,7 +234,7 @@ describe("UpdateServerConfigCommand", () => {
           [dbPropName]: "new-property-value",
         }),
       ]);
-    }
+    },
   );
 
   it.each([
@@ -269,7 +269,7 @@ describe("UpdateServerConfigCommand", () => {
           [dbKey]: "new-value",
         }),
       ]);
-    }
+    },
   );
 
   it.each([
@@ -310,6 +310,6 @@ describe("UpdateServerConfigCommand", () => {
           [dbPropName]: null,
         }),
       ]);
-    }
+    },
   );
 });

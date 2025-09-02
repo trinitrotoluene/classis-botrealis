@@ -40,7 +40,7 @@ export default class GetItemRecipeQuery extends CommandBase<Args, Response> {
 async function getRecipeNodes(
   itemId: string,
   quantity: number,
-  visited = new Set<string>()
+  visited = new Set<string>(),
 ): Promise<IRecipeNode> {
   const cacheEntry = RecipeNodeCache.get(`${itemId}-${quantity}`) as
     | IRecipeNode
@@ -85,8 +85,8 @@ async function getRecipeNodes(
 
     const nodesForConsumedItems = await Promise.all(
       consumedItems.map((x) =>
-        getRecipeNodes(x.ItemId, x.Quantity * quantity, new Set(visited))
-      )
+        getRecipeNodes(x.ItemId, x.Quantity * quantity, new Set(visited)),
+      ),
     );
 
     const firstConsumedItemName = nodesForConsumedItems[0]?.item?.name ?? "n/a";

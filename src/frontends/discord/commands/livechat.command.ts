@@ -31,15 +31,15 @@ export const data = new SlashCommandBuilder()
             { name: "Local", value: "local" },
           ])
           .setDescription("The type of messages to forward")
-          .setRequired(true)
+          .setRequired(true),
       )
       .addChannelOption((o) =>
         o
           .addChannelTypes([ChannelType.GuildText])
           .setName("channel")
           .setDescription("The channel to forward messages to")
-          .setRequired(true)
-      )
+          .setRequired(true),
+      ),
   )
   .addSubcommand((s) =>
     s
@@ -55,8 +55,8 @@ export const data = new SlashCommandBuilder()
             { name: "Local", value: "local" },
           ])
           .setDescription("The type of messages to unsubscribe from")
-          .setRequired(true)
-      )
+          .setRequired(true),
+      ),
   );
 
 const { registerSubCommand, ...command } = commandDefinition();
@@ -79,7 +79,7 @@ registerSubCommand("configure", {
     const existingConfig = await QueryBus.execute(
       new GetServerConfigQuery({
         serverId: i.guildId,
-      })
+      }),
     );
 
     if (!existingConfig.ok) {
@@ -129,7 +129,7 @@ registerSubCommand("configure", {
       new UpdateServerConfigCommand({
         serverId: i.guildId,
         webhooks,
-      })
+      }),
     );
 
     if (result.ok) {
@@ -159,7 +159,7 @@ registerSubCommand("stop", {
     const existingConfig = await QueryBus.execute(
       new GetServerConfigQuery({
         serverId: i.guildId,
-      })
+      }),
     );
 
     if (!existingConfig.ok) {
@@ -178,7 +178,7 @@ registerSubCommand("stop", {
               liveRegionChatWebhookId: null,
               liveRegionChatWebhookToken: null,
             },
-          })
+          }),
         );
       }
     }
@@ -193,7 +193,7 @@ registerSubCommand("stop", {
               liveEmpireChatWebhookId: null,
               liveEmpireChatWebhookToken: null,
             },
-          })
+          }),
         );
       }
     }
@@ -208,7 +208,7 @@ registerSubCommand("stop", {
               liveLocalChatWebhookId: null,
               liveLocalChatWebhookToken: null,
             },
-          })
+          }),
         );
       }
     }

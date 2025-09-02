@@ -19,11 +19,11 @@ export const data = new SlashCommandBuilder()
     s
       .setName("start")
       .setDescription(
-        "Create a thread logging shared crafts in the channel you run this command in"
-      )
+        "Create a thread logging shared crafts in the channel you run this command in",
+      ),
   )
   .addSubcommand((s) =>
-    s.setName("stop").setDescription("Stop notifying for shared crafts")
+    s.setName("stop").setDescription("Stop notifying for shared crafts"),
   );
 
 const { registerSubCommand, ...command } = commandDefinition();
@@ -60,7 +60,7 @@ registerSubCommand("start", {
       new UpdateServerConfigCommand({
         serverId: i.guildId,
         sharedCraftThreadId: thread.id,
-      })
+      }),
     );
 
     if (!result.ok) {
@@ -100,7 +100,7 @@ registerSubCommand("stop", {
       new UpdateServerConfigCommand({
         serverId: i.guildId,
         sharedCraftThreadId: null,
-      })
+      }),
     );
 
     if (result.ok) {

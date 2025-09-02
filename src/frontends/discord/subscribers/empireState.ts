@@ -11,7 +11,7 @@ const Aggregator = new EventAggregator<
 
 export async function onEmpireStateUpdated(
   oldState: BitcraftEmpireState,
-  newState: BitcraftEmpireState
+  newState: BitcraftEmpireState,
 ) {
   Aggregator.push(
     newState.Id,
@@ -21,12 +21,12 @@ export async function onEmpireStateUpdated(
       oldAmount: oldState.ShardTreasury,
     },
     (events) => aggregateCallback(events),
-    10
+    10,
   );
 }
 
 export async function aggregateCallback(
-  events: Array<BitcraftEmpireState & { oldAmount: number; newAmount: number }>
+  events: Array<BitcraftEmpireState & { oldAmount: number; newAmount: number }>,
 ) {
   logger.info(`Running aggregate callback for ${events.length} events`);
   if (events.length === 0) {
@@ -36,7 +36,7 @@ export async function aggregateCallback(
   const serversToNotify = await QueryBus.execute(
     new GetAllEmpireObservationThreadsQuery({
       empireId: events[0].Id,
-    })
+    }),
   );
 
   if (!serversToNotify.ok) {
@@ -58,7 +58,7 @@ export async function aggregateCallback(
   const builder = new ContainerBuilder()
     .setAccentColor(0xd9427e)
     .addTextDisplayComponents((c) =>
-      c.setContent(`## ${events[0].Name} hexite treasury updated`)
+      c.setContent(`## ${events[0].Name} hexite treasury updated`),
     )
     .addSeparatorComponents((s) => s)
     .addTextDisplayComponents((c) =>
@@ -69,13 +69,13 @@ Net change         : ${sign(totalChange)}
 Sum of deposits    : ${sign(totalDeposits)}
 Sum of withdrawals : ${sign(totalWithdrawals)}
 \`\`\`
-`)
+`),
     );
 
   const results = await Promise.allSettled(
     serversToNotify.data.results.map((x) =>
-      DiscordBot.channels.fetch(x.threadId)
-    )
+      DiscordBot.channels.fetch(x.threadId),
+    ),
   );
 
   await Promise.all(
@@ -91,6 +91,6 @@ Sum of withdrawals : ${sign(totalWithdrawals)}
           flags: MessageFlags.IsComponentsV2,
         });
       }
-    })
+    }),
   );
 }

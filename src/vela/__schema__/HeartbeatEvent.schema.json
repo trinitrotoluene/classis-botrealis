@@ -12,9 +12,5 @@
       "type": "integer"
     }
   },
-  "required": [
-    "Application",
-    "PublishedAt",
-    "Seq"
-  ]
+  "required": ["Application", "PublishedAt", "Seq"]
 }

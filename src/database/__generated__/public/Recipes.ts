@@ -1,7 +1,7 @@
-import type { ColumnType, Selectable, Insertable, Updateable } from 'kysely';
+import type { ColumnType, Selectable, Insertable, Updateable } from "kysely";
 
 /** Identifier type for public.recipes */
-export type RecipesId = string & { __brand: 'public.recipes' };
+export type RecipesId = string & { __brand: "public.recipes" };
 
 /** Represents the table public.recipes */
 export default interface RecipesTable {

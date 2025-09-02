@@ -9,7 +9,7 @@ export default class ResetOrderCacheCommand extends CommandBase<
 > {
   public async execute() {
     const listingsData = await CacheClient.getAllGlobal(
-      "BitcraftAuctionListingState"
+      "BitcraftAuctionListingState",
     );
 
     const buyOrderListings = listingsData
@@ -24,7 +24,7 @@ export default class ResetOrderCacheCommand extends CommandBase<
       .toArray();
 
     logger.info(
-      `Resetting the buy order cache with ${buyOrderListings.length} items`
+      `Resetting the buy order cache with ${buyOrderListings.length} items`,
     );
     BuyOrderCache.init(buyOrderListings);
 
@@ -40,7 +40,7 @@ export default class ResetOrderCacheCommand extends CommandBase<
       .toArray();
 
     logger.info(
-      `Resetting the sell order cache with ${sellOrderListings.length} items`
+      `Resetting the sell order cache with ${sellOrderListings.length} items`,
     );
     SellOrderCache.init(sellOrderListings);
 

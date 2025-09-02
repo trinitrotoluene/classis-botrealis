@@ -4,7 +4,7 @@ import { getRedis } from "../redis";
 export class CacheClientImpl {
   async getByIdGlobal<TEntityName extends keyof TGlobalEntityMap>(
     entityName: TEntityName,
-    id: string
+    id: string,
   ): Promise<TGlobalEntityMap[TEntityName] | undefined> {
     const cacheKey = `cache:${entityName}:global`;
     const result = await getRedis().hget(cacheKey, id);
@@ -18,7 +18,7 @@ export class CacheClientImpl {
   async getById<TEntityName extends keyof TRegionalEntityMap>(
     entityName: TEntityName,
     module: string | null | undefined,
-    id: string
+    id: string,
   ): Promise<TRegionalEntityMap[TEntityName] | undefined> {
     const cacheKey = `cache:${entityName}:${module}`;
     const result = await getRedis().hget(cacheKey, id);
@@ -31,7 +31,7 @@ export class CacheClientImpl {
 
   async getAll<TEntityName extends keyof TRegionalEntityMap>(
     entityName: TEntityName,
-    module: string | null | undefined
+    module: string | null | undefined,
   ): Promise<Map<string, TRegionalEntityMap[TEntityName]>> {
     const cacheKey = `cache:${entityName}:${module}`;
     const result = await getRedis().hgetall(cacheKey);
@@ -45,7 +45,7 @@ export class CacheClientImpl {
   }
 
   async getAllGlobal<TEntityName extends keyof TGlobalEntityMap>(
-    entityName: TEntityName
+    entityName: TEntityName,
   ): Promise<Map<string, TGlobalEntityMap[TEntityName]>> {
     const cacheKey = `cache:${entityName}:global`;
     const result = await getRedis().hgetall(cacheKey);

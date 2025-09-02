@@ -1,7 +1,7 @@
-import type { ColumnType, Selectable, Insertable, Updateable } from 'kysely';
+import type { ColumnType, Selectable, Insertable, Updateable } from "kysely";
 
 /** Identifier type for public.items */
-export type ItemsId = string & { __brand: 'public.items' };
+export type ItemsId = string & { __brand: "public.items" };
 
 /** Represents the table public.items */
 export default interface ItemsTable {

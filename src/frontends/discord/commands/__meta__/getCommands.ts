@@ -20,7 +20,7 @@ interface ISlashCommandDefinition {
 
 export async function getCommands(
   currentDir: string,
-  collection?: Collection<string, ISlashCommandDefinition>
+  collection?: Collection<string, ISlashCommandDefinition>,
 ): Promise<Collection<string, ISlashCommandDefinition>> {
   logger.info(`Loading commands from directory: ${currentDir}`);
 
@@ -28,7 +28,7 @@ export async function getCommands(
 
   const dirContents = readdirSync(currentDir, { withFileTypes: true });
   const files = dirContents.filter(
-    (file) => file.isFile() && file.name.endsWith(".command.ts")
+    (file) => file.isFile() && file.name.endsWith(".command.ts"),
   );
 
   logger.info(`Found ${files.length} command file(s) in ${currentDir}`);
@@ -41,7 +41,7 @@ export async function getCommands(
     const command = commandModule.default || commandModule;
     if (!command.data || !command.execute) {
       logger.warn(
-        `Command in ${fullPath} does not have required properties 'data' and 'execute'`
+        `Command in ${fullPath} does not have required properties 'data' and 'execute'`,
       );
       continue;
     }

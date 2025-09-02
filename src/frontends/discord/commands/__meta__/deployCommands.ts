@@ -24,7 +24,7 @@ await rest.put(Routes.applicationCommands(Config.discord.dev_app_id!), {
 await rest.put(
   Routes.applicationGuildCommands(
     Config.discord.dev_app_id!,
-    Config.discord.dev_guild_id!
+    Config.discord.dev_guild_id!,
   ),
-  { body: privateCommands }
+  { body: privateCommands },
 );

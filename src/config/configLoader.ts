@@ -51,7 +51,7 @@ function fileBasedConfig() {
 
   function set<TKey extends ConfigKeys>(
     path: TKey,
-    value: ConfigValueAtPath<ValidatedConfig, ConfigKeys>
+    value: ConfigValueAtPath<ValidatedConfig, ConfigKeys>,
   ) {
     const keys = path.split(".");
     if (keys.length < 1) {

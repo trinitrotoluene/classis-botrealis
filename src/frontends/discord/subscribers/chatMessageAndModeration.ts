@@ -11,12 +11,12 @@ const clientCache: Record<string, WebhookClient> = {};
 
 export async function onBitcraftChatMessage(payload: BitcraftChatMessage) {
   const response = await QueryBus.execute(
-    new GetAllWebhooksForChannelQuery({ channelId: payload.ChannelId })
+    new GetAllWebhooksForChannelQuery({ channelId: payload.ChannelId }),
   );
 
   if (!response.ok) {
     logger.warn(
-      `Failed to fetch configured webhooks for channel ${payload.ChannelId}`
+      `Failed to fetch configured webhooks for channel ${payload.ChannelId}`,
     );
     return;
   }
@@ -27,20 +27,20 @@ export async function onBitcraftChatMessage(payload: BitcraftChatMessage) {
         username: payload.SenderUsername,
         content: payload.Content,
       });
-    })
+    }),
   );
 }
 
 export async function onBitcraftUserModerated(
-  payload: BitcraftUserModerationState
+  payload: BitcraftUserModerationState,
 ) {
   const response = await QueryBus.execute(
-    new GetAllWebhooksForChannelQuery({ channelId: ChannelId.Region })
+    new GetAllWebhooksForChannelQuery({ channelId: ChannelId.Region }),
   );
 
   if (!response.ok) {
     logger.warn(
-      `Failed to fetch configured webhooks for channel ${ChannelId.Region}`
+      `Failed to fetch configured webhooks for channel ${ChannelId.Region}`,
     );
     return;
   }
@@ -51,13 +51,13 @@ export async function onBitcraftUserModerated(
         username: "[SYSTEM]",
         content: `User ${payload.TargetEntityId} had had policy ${payload.UserModerationPolicy} applied until ${payload.ExpiresAt}.`,
       });
-    })
+    }),
   );
 }
 
 async function sendWebhook(
   config: { webhookId: string; webhookToken: string },
-  options: { username: string; content: string }
+  options: { username: string; content: string },
 ) {
   const { webhookId, webhookToken } = config;
 
@@ -79,7 +79,7 @@ async function sendWebhook(
   } catch (error) {
     logger.error(
       { error, config, options },
-      `Failed to send message via webhook`
+      `Failed to send message via webhook`,
     );
   }
 }

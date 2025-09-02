@@ -46,7 +46,7 @@ function calculatePrices(orders: IOrderMetadata[]) {
 }
 
 function computeMedianPrice<TItem extends { price: number; quantity: number }>(
-  items: Array<TItem>
+  items: Array<TItem>,
 ) {
   let totalQuantity = 0;
   for (const item of items) {
@@ -82,7 +82,7 @@ function computeMedianPrice<TItem extends { price: number; quantity: number }>(
 
 function computeMAD<TItem extends { price: number }>(
   medianPrice: number,
-  items: Array<TItem>
+  items: Array<TItem>,
 ) {
   const absoluteDeviations: number[] = [];
 
@@ -104,7 +104,7 @@ function processItems<TItem extends { price: number; quantity: number }>(
   median: number,
   mad: number,
   totalQuantity: number,
-  items: Array<TItem>
+  items: Array<TItem>,
 ) {
   const threshold = 2;
   const adjustment = threshold * mad;
@@ -133,7 +133,7 @@ function processItems<TItem extends { price: number; quantity: number }>(
 
   return {
     adjustedWeightedAveragePrice: Number(
-      adjustedWeightedAveragePrice.toFixed(2)
+      adjustedWeightedAveragePrice.toFixed(2),
     ),
     lowestPrice,
     highestPrice,

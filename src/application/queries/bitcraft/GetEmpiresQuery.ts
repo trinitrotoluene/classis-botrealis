@@ -19,7 +19,7 @@ export default class GetEmpiresQuery extends CommandBase<Args, Response> {
       results: empires
         .values()
         .filter((x) =>
-          x.Name.toLowerCase().includes(this.args.searchText.toLowerCase())
+          x.Name.toLowerCase().includes(this.args.searchText.toLowerCase()),
         )
         .map((x) => ({
           id: x.Id,

@@ -43,12 +43,12 @@ export default class GetPublicCraftQuery extends CommandBase<
       linkedState = await CacheClient.getById(
         "BitcraftProgressiveAction",
         this.args.Module,
-        this.args.Id
+        this.args.Id,
       );
 
       if (!linkedState && attempts < maxAttempts) {
         logger.warn(
-          "Notified of a public craft but it is not present in cache - waiting 2 seconds before checking again"
+          "Notified of a public craft but it is not present in cache - waiting 2 seconds before checking again",
         );
         await new Promise((resolve) => setTimeout(() => resolve(null), 2000));
       }
@@ -64,7 +64,7 @@ export default class GetPublicCraftQuery extends CommandBase<
     const linkedBuilding = await CacheClient.getById(
       "BitcraftBuildingState",
       this.args.Module,
-      this.args.BuildingEntityId
+      this.args.BuildingEntityId,
     );
 
     if (!linkedBuilding) {
@@ -74,7 +74,7 @@ export default class GetPublicCraftQuery extends CommandBase<
 
     const claim = await CacheClient.getByIdGlobal(
       "BitcraftClaimState",
-      linkedBuilding.ClaimEntityId
+      linkedBuilding.ClaimEntityId,
     );
 
     const recipe = await db
@@ -86,18 +86,18 @@ export default class GetPublicCraftQuery extends CommandBase<
     const location = await CacheClient.getById(
       "BitcraftLocationState",
       this.args.Module,
-      this.args.BuildingEntityId
+      this.args.BuildingEntityId,
     );
 
     const user = await CacheClient.getByIdGlobal(
       "BitcraftUsernameState",
-      this.args.OwnerEntityId
+      this.args.OwnerEntityId,
     );
 
     if (!recipe) {
       logger.warn(
         this.args,
-        "Progressive action state event contained an unknown recipe ID"
+        "Progressive action state event contained an unknown recipe ID",
       );
       return;
     }
@@ -106,7 +106,7 @@ export default class GetPublicCraftQuery extends CommandBase<
 
     if (effort < 25_000) {
       logger.debug(
-        `Craft does not meet notification threshold (${effort} effort)`
+        `Craft does not meet notification threshold (${effort} effort)`,
       );
       return;
     }

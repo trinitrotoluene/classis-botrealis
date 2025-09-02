@@ -24,7 +24,7 @@ for (const file of files) {
     const isGlobalEntity = !!rawSchema["x-global-entity"];
 
     let ts = await compileFromFile(inputPath, {});
-    ts = ts.replace("[k: string]: unknown;", "");
+    ts = ts.replaceAll("[k: string]: unknown;", "");
 
     fs.writeFileSync(outputPath, ts);
     logger.info(`Generated: ${outputPath}`);
@@ -35,10 +35,10 @@ for (const file of files) {
   }
 }
 const bitcraftSchemaNames = schemaNames.filter((x) =>
-  x.name.startsWith("Bitcraft")
+  x.name.startsWith("Bitcraft"),
 );
 const systemSchemaNames = schemaNames.filter(
-  (x) => !x.name.startsWith("Bitcraft")
+  (x) => !x.name.startsWith("Bitcraft"),
 );
 
 const indexContent = `// Exports
