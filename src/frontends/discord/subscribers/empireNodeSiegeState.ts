@@ -1,6 +1,6 @@
 import GetEmpireSiegeContextQuery from "@src/application/queries/bitcraft/GetEmpireSiegeContextQuery";
 import GetAllEmpireObservationThreadsQuery from "@src/application/queries/config/GetAllEmpireObservationThreadsQuery";
-import { EventAggregator, QueryBus } from "@src/framework";
+import { QueryBus } from "@src/framework";
 import { logger } from "@src/logger";
 import type { BitcraftEmpireNodeSiegeState } from "@src/vela";
 import { ContainerBuilder, MessageFlags } from "discord.js";
@@ -43,6 +43,13 @@ export async function onEmpireNodeSiegeStateAdded(
   }
 
   const { attackingEmpire, defendingEmpire, tower } = getContextRequest.data;
+  if (attackingEmpire?.Id === defendingEmpire?.Id) {
+    logger.info(
+      "Skipping siege state insert as the update is for the defending party",
+    );
+    return;
+  }
+
   const builder = new ContainerBuilder()
     .setAccentColor(0xf05a4f)
     .addTextDisplayComponents((c) =>
@@ -58,8 +65,7 @@ export async function onEmpireNodeSiegeStateAdded(
 
 🏰 The defending tower has ${tower?.Energy ?? "n/a"} energy
 
--# ${tower ? `[bitcraftmap.com](${generateMapUrl(tower?.LocationX, tower?.LocationZ, "Tower under siege")})` : "sorry dunno where the tower is"}
-`,
+-# ${tower ? `[bitcraftmap.com](${generateMapUrl(tower?.LocationX, tower?.LocationZ, "Tower under siege")})` : "sorry dunno where the tower is"}`,
       ),
     );
 
@@ -69,53 +75,12 @@ export async function onEmpireNodeSiegeStateAdded(
   );
 }
 
-const Aggregator = new EventAggregator<{
-  oldState: BitcraftEmpireNodeSiegeState;
-  newState: BitcraftEmpireNodeSiegeState;
-}>();
-
-export function onEmpireNodeSiegeStateUpdated(
+export async function onEmpireNodeSiegeStateUpdated(
   oldState: BitcraftEmpireNodeSiegeState,
   newState: BitcraftEmpireNodeSiegeState,
 ) {
-  Aggregator.push(
-    newState.Id,
-    { oldState, newState },
-    onSiegeUpdatesCallback,
-    30,
-  );
-}
-
-async function onSiegeUpdatesCallback(
-  events: Array<{
-    oldState: BitcraftEmpireNodeSiegeState;
-    newState: BitcraftEmpireNodeSiegeState;
-  }>,
-) {
-  const subscribingThreads = await getEmpireThreadIds(
-    events[0].newState.EmpireId,
-  );
-
-  if (subscribingThreads.length < 1) {
-    logger.info("Nobody cares about this empire, ignoring event");
-    return;
-  }
-
-  const { delta, finalAmount } = events.reduce(
-    (acc, { oldState, newState }) => {
-      const change = newState.Energy - oldState.Energy;
-      acc.delta += change;
-      acc.finalAmount = newState.Energy;
-      return acc;
-    },
-    {
-      delta: 0,
-      finalAmount: 0,
-    },
-  );
-
   const getContextRequest = await QueryBus.execute(
-    new GetEmpireSiegeContextQuery(events[0].newState),
+    new GetEmpireSiegeContextQuery(newState),
   );
 
   if (!getContextRequest.ok) {
@@ -124,6 +89,22 @@ async function onSiegeUpdatesCallback(
   }
 
   const { attackingEmpire, defendingEmpire, tower } = getContextRequest.data;
+
+  if (tower?.EmpireId === newState.EmpireId) {
+    logger.info(
+      "Skipping siege state update as the update is for the defending party",
+    );
+  }
+
+  const subscribingThreads = await getEmpireThreadIds(newState.EmpireId);
+  if (subscribingThreads.length < 1) {
+    logger.info("Nobody cares about this empire, ignoring event");
+    return;
+  }
+
+  const finalAmount = newState.Energy;
+  const delta = newState.Energy - oldState.Energy;
+
   const builder = new ContainerBuilder()
     .setAccentColor(0xf05a4f)
     .addTextDisplayComponents((c) =>
@@ -166,6 +147,12 @@ export async function onEmpireNodeSiegeStateDeleted(
   }
 
   const { attackingEmpire, defendingEmpire, tower } = getContextRequest.data;
+  if (attackingEmpire?.Id === defendingEmpire?.Id) {
+    logger.info(
+      "Skipping siege state update as the update is for the defending party",
+    );
+    return;
+  }
 
   let outcomeMessage = "unknown";
   if (tower && (attackingEmpire || defendingEmpire)) {

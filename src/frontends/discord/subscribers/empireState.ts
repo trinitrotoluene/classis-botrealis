@@ -59,7 +59,7 @@ export async function aggregateCallback(
     .setAccentColor(0xd9427e)
     .addTextDisplayComponents((c) =>
       c.setContent(
-        `## ${events[0].Name} treasury updated (${sign(totalChange)}`,
+        `## ${events[0].Name} treasury updated (${sign(totalChange)})`,
       ),
     )
     .addSeparatorComponents((s) => s)
