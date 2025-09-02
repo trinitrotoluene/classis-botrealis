@@ -89,11 +89,11 @@ export async function onEmpireNodeSiegeStateUpdated(
   }
 
   const { attackingEmpire, defendingEmpire, tower } = getContextRequest.data;
-
-  if (tower?.EmpireId === newState.EmpireId) {
+  if (attackingEmpire?.Id === defendingEmpire?.Id) {
     logger.info(
       "Skipping siege state update as the update is for the defending party",
     );
+    return;
   }
 
   const subscribingThreads = await getEmpireThreadIds(newState.EmpireId);
@@ -118,7 +118,7 @@ export async function onEmpireNodeSiegeStateUpdated(
         `⚔️ ${attackingEmpire?.Name ?? DEFAULT_NAME}'s siege has ${finalAmount} energy (${sign(delta)})
 🏰 ${defendingEmpire?.Name ?? DEFAULT_NAME}'s tower has ${tower?.Energy ?? "n/a"} energy remaining
 
--# ${tower ? `[bitcraftmap.com](${generateMapUrl(tower?.LocationX, tower?.LocationZ, "Tower under siege")})` : "sorry dunno where the tower is"}`,
+-# ${tower ? `[${tower?.LocationX}, ${tower.LocationZ}](${generateMapUrl(tower?.LocationX, tower?.LocationZ, "Tower under siege")})` : "sorry dunno where the tower is"}`,
       ),
     );
 
@@ -181,7 +181,7 @@ export async function onEmpireNodeSiegeStateDeleted(
 
 ${outcomeMessage}
 
--# ${tower ? `[bitcraftmap.com](${generateMapUrl(tower?.LocationX, tower?.LocationZ, "Tower under siege")})` : "sorry dunno where the tower is"}`,
+-# ${tower ? `[${tower?.LocationX}, ${tower.LocationZ}](${generateMapUrl(tower?.LocationX, tower?.LocationZ, "Tower under siege")})` : "sorry dunno where the tower is"}`,
       ),
     );
 
