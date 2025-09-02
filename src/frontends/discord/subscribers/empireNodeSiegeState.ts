@@ -118,7 +118,7 @@ export async function onEmpireNodeSiegeStateUpdated(
         `⚔️ ${attackingEmpire?.Name ?? DEFAULT_NAME}'s siege has ${finalAmount} energy (${sign(delta)})
 🏰 ${defendingEmpire?.Name ?? DEFAULT_NAME}'s tower has ${tower?.Energy ?? "n/a"} energy remaining
 
--# ${tower ? generateMapUrl(tower?.LocationX, tower?.LocationZ, "Tower under siege") : "sorry dunno where the tower is"}`,
+-# ${tower ? `[bitcraftmap.com](${generateMapUrl(tower?.LocationX, tower?.LocationZ, "Tower under siege")})` : "sorry dunno where the tower is"}`,
       ),
     );
 
@@ -179,7 +179,9 @@ export async function onEmpireNodeSiegeStateDeleted(
         `⚔️ ${attackingEmpire?.Name ?? DEFAULT_NAME} has ${attackingEmpire?.ShardTreasury ?? "n/a"} shards
 🛡️ ${defendingEmpire?.Name ?? DEFAULT_NAME} has ${defendingEmpire?.ShardTreasury ?? "n/a"} shards
 
-${outcomeMessage}`,
+${outcomeMessage}
+
+-# ${tower ? `[bitcraftmap.com](${generateMapUrl(tower?.LocationX, tower?.LocationZ, "Tower under siege")})` : "sorry dunno where the tower is"}`,
       ),
     );
 
