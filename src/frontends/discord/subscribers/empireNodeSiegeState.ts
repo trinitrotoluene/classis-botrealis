@@ -34,10 +34,7 @@ export async function onEmpireNodeSiegeStateAdded(
   }
 
   const getContextRequest = await QueryBus.execute(
-    new GetEmpireSiegeContextQuery({
-      siegeEmpireId: state.EmpireId,
-      siegeBuildingEntityId: state.BuildingEntityId,
-    }),
+    new GetEmpireSiegeContextQuery(state),
   );
 
   if (!getContextRequest.ok) {
@@ -118,10 +115,7 @@ async function onSiegeUpdatesCallback(
   );
 
   const getContextRequest = await QueryBus.execute(
-    new GetEmpireSiegeContextQuery({
-      siegeEmpireId: events[0].newState.EmpireId,
-      siegeBuildingEntityId: events[0].oldState.BuildingEntityId,
-    }),
+    new GetEmpireSiegeContextQuery(events[0].newState),
   );
 
   if (!getContextRequest.ok) {
