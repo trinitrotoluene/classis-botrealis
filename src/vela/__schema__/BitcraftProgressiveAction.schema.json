@@ -15,9 +15,6 @@
     },
     "Module": {
       "type": "string"
-    },
-    "CallerIdentity": {
-      "type": "string"
     }
   },
   "required": ["RecipeId", "CraftCount", "Progress", "Id"]

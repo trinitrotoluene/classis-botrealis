@@ -30,9 +30,6 @@
     },
     "Module": {
       "type": "string"
-    },
-    "CallerIdentity": {
-      "type": "string"
     }
   },
   "required": [

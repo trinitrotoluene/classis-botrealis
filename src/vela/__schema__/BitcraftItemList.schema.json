@@ -36,9 +36,6 @@
     },
     "Module": {
       "type": "string"
-    },
-    "CallerIdentity": {
-      "type": "string"
     }
   },
   "required": ["Name", "Possibilities", "Id"],

@@ -16,5 +16,4 @@ export interface BitcraftUserModerationState {
   ExpiresAt: string;
   Id: string;
   Module?: string;
-  CallerIdentity?: string;
 }

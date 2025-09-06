@@ -4,8 +4,10 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface BitcraftUsernameState {
-  Username: string;
-  Id: string;
-  Module?: string;
+export interface UpdateEnvelope_1 {
+  Version: "v1";
+  Module: string;
+  CallerIdentity: string;
+  OldEntity: unknown;
+  NewEntity: unknown;
 }

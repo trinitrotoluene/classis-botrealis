@@ -11,5 +11,4 @@ export interface BitcraftChatMessage {
   Content: string;
   Id: string;
   Module?: string;
-  CallerIdentity?: string;
 }

@@ -11,5 +11,4 @@ export interface BitcraftClaimState {
   IsNeutral: boolean;
   Id: string;
   Module?: string;
-  CallerIdentity?: string;
 }

@@ -18,9 +18,6 @@
     },
     "Module": {
       "type": "string"
-    },
-    "CallerIdentity": {
-      "type": "string"
     }
   },
   "required": ["EmpireId", "IsActive", "BuildingEntityId", "Energy", "Id"]

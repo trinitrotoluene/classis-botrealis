@@ -18,7 +18,9 @@ export * from "./BitcraftRecipe";
 export * from "./BitcraftUserModerationState";
 export * from "./BitcraftUserState";
 export * from "./BitcraftUsernameState";
+export * from "./Envelope_1";
 export * from "./HeartbeatEvent";
+export * from "./UpdateEnvelope_1";
 
 import type { BitcraftActionLogState } from "./BitcraftActionLogState";
 import type { BitcraftAuctionListingState } from "./BitcraftAuctionListingState";

@@ -9,5 +9,4 @@ export interface BitcraftBuildingDesc {
   Description: string;
   Id: string;
   Module?: string;
-  CallerIdentity?: string;
 }

@@ -18,9 +18,6 @@
     },
     "Module": {
       "type": "string"
-    },
-    "CallerIdentity": {
-      "type": "string"
     }
   },
   "required": ["ChannelId", "SenderId", "SenderUsername", "Content", "Id"]

@@ -15,5 +15,4 @@ export interface BitcraftEmpireNodeState {
   Energy: number;
   Id: string;
   Module?: string;
-  CallerIdentity?: string;
 }

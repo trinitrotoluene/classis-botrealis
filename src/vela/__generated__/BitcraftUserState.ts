@@ -9,5 +9,4 @@ export interface BitcraftUserState {
   CanSignIn: boolean;
   Id: string;
   Module?: string;
-  CallerIdentity?: string;
 }

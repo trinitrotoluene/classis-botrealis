@@ -12,9 +12,6 @@
     },
     "Module": {
       "type": "string"
-    },
-    "CallerIdentity": {
-      "type": "string"
     }
   },
   "required": ["UserEntityId", "CanSignIn", "Id"]

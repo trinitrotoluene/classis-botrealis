@@ -38,13 +38,16 @@ const bitcraftSchemaNames = schemaNames.filter((x) =>
   x.name.startsWith("Bitcraft"),
 );
 const systemSchemaNames = schemaNames.filter(
-  (x) => !x.name.startsWith("Bitcraft"),
+  (x) =>
+    !x.name.startsWith("Bitcraft") &&
+    !x.name.startsWith("Envelope") &&
+    !x.name.startsWith("UpdateEnvelope"),
 );
 
 const indexContent = `// Exports
 ${schemaNames.map((x) => `export * from "./${x.name}"`).join(";\n")}
 
-${schemaNames.map((x) => `import type {${x.name}} from "./${x.name}"`).join(";\n")}
+${[...bitcraftSchemaNames, ...systemSchemaNames].map((x) => `import type {${x.name}} from "./${x.name}"`).join(";\n")}
 
 export enum BitcraftEntities {
   ${bitcraftSchemaNames.map((x) => `${x.name} = "${x.name}"`).join(",\n  ")}

@@ -1,17 +1,15 @@
-import type { BitcraftEntities, SystemEntities } from "../__generated__";
+import type {
+  BitcraftEntities,
+  Envelope_1,
+  SystemEntities,
+  UpdateEnvelope_1,
+} from "../__generated__";
 
-export interface Envelope<T> {
-  Version: "V1";
-  Module: string;
-  Entity: T;
-}
-
-export interface UpdateEnvelope<T> {
-  Version: "V1";
-  Module: string;
-  OldEntity: T;
-  NewEntity: T;
-}
+export type Envelope<T> = Omit<Envelope_1, "Entity"> & { Entity: T };
+export type UpdateEnvelope<T> = Omit<
+  UpdateEnvelope_1,
+  "OldEntity" | "NewEntity"
+> & { OldEntity: T; NewEntity: T };
 
 export type TRedisChannels =
   | `bitcraft.${BitcraftEntities}.insert`

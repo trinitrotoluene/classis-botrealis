@@ -13,5 +13,4 @@ export interface BitcraftAuctionListingState {
   ItemId: number;
   Id: string;
   Module?: string;
-  CallerIdentity?: string;
 }
