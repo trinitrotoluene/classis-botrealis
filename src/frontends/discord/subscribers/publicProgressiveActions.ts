@@ -41,26 +41,14 @@ export async function onSharedCraftInserted(
   }
 
   const formatProducedItem = (item: (typeof producedItems)[0]) =>
-    item ? `## **[T${item.tier}] ${item.name}**` : "n/a";
+    item ? `**[T${item.tier}] ${item.name}**` : "n/a";
 
   const builder = new ContainerBuilder()
     .setAccentColor(0xd9427e)
     .addTextDisplayComponents((c) =>
-      c.setContent(formatProducedItem(producedItems[0])),
-    )
-    .addSeparatorComponents((s) => s)
-    .addTextDisplayComponents((c) =>
-      c.setContent(`\`\`\`
-Claim    : ${claim?.Name}
-User     : ${user?.Username ?? "n/a"}
-
-(${progress}/${effort})
-\`\`\`
-`),
-    )
-    .addSeparatorComponents((s) => s)
-    .addTextDisplayComponents((c) =>
-      c.setContent(mapUrl ? `[bitcraftmap.com](${mapUrl})` : "n/a"),
+      c.setContent(`### ${formatProducedItem(producedItems[0])}
+👤 ${user?.Username ?? "n/a"} at ${mapUrl ? `[${claim?.Name}](${mapUrl})` : claim?.Name}
+🛠️ **${effort - progress}** effort remaining of ${effort}!`),
     );
 
   const results = await Promise.allSettled(
