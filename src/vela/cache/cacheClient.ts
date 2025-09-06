@@ -1,7 +1,14 @@
+import NodeCache from "node-cache";
 import type { TGlobalEntityMap, TRegionalEntityMap } from "../__generated__";
 import { getRedis } from "../redis";
 
 export class CacheClientImpl {
+  private readonly globalCache: NodeCache;
+
+  constructor() {
+    this.globalCache = new NodeCache({ stdTTL: 10 });
+  }
+
   async getByIdGlobal<TEntityName extends keyof TGlobalEntityMap>(
     entityName: TEntityName,
     id: string,
@@ -57,11 +64,21 @@ export class CacheClientImpl {
 
   async getAllGlobal<TEntityName extends keyof TGlobalEntityMap>(
     entityName: TEntityName,
+    bypassCache?: boolean,
   ): Promise<Map<string, TGlobalEntityMap[TEntityName]>> {
     const cacheKey = `cache:${entityName}:global`;
+
+    let output =
+      this.globalCache.get<Map<string, TGlobalEntityMap[TEntityName]>>(
+        cacheKey,
+      );
+    if (output && !bypassCache) {
+      return output;
+    }
+
     const result = await getRedis().hgetall(cacheKey);
 
-    const output = new Map();
+    output = new Map();
     for (const key in result) {
       output.set(key, JSON.parse(result[key]));
     }

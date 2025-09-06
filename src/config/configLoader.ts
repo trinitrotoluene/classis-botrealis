@@ -86,10 +86,8 @@ function environmentBasedConfig(): Partial<ValidatedConfig> {
       dev_guild_id: process.env.DISCORD_ADMIN_GUILD_ID,
     },
     redis: {
-      host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT
-        ? parseInt(process.env.REDIS_PORT)
-        : undefined,
+      host: process.env.REDIS_HOST ?? "",
+      port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 1111,
     },
     postgres: {},
   } as ValidatedConfig;

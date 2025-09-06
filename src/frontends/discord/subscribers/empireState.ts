@@ -14,6 +14,10 @@ export async function onEmpireStateUpdated(
   oldState: BitcraftEmpireState,
   newState: BitcraftEmpireState,
 ) {
+  if (oldState.ShardTreasury === newState.ShardTreasury) {
+    return;
+  }
+
   Aggregator.push(
     newState.Id,
     {
@@ -66,7 +70,7 @@ export async function aggregateCallback(
     .addTextDisplayComponents((c) =>
       c.setContent(
         `💰 ${events.slice(-1)[0]?.newAmount ?? "n/a"} shards remaining
--# added ${sign(totalWithdrawals)}, withdrew ${sign(totalDeposits)}`,
+-# deposit(${sign(totalDeposits)}) withdrawal(${sign(totalWithdrawals)})`,
       ),
     );
 
