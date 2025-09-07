@@ -29,6 +29,7 @@ import {
   onEmpireNodeSiegeStateUpdated,
 } from "./subscribers/empireNodeSiegeState";
 import { onInventoryStateUpdate } from "./subscribers/inventoryStateUpdate";
+import { onHeartbeat } from "./subscribers/heartbeat";
 
 export const DiscordBot = new Client({
   intents: [GatewayIntentBits.Guilds],
@@ -93,6 +94,8 @@ DiscordBot.on(Events.ClientReady, async (client) => {
     "bitcraft.BitcraftInventoryState.update",
     onInventoryStateUpdate,
   );
+
+  PubSub.subscribe("system.HeartbeatEvent", onHeartbeat);
 });
 
 DiscordBot.on(Events.GuildAvailable, (guild) => {

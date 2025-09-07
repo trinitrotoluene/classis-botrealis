@@ -17,7 +17,11 @@ type Entity<T extends string> = T extends `${string}.${infer TEntity}.${string}`
   ? TEntity extends keyof TAllEntityMap
     ? TAllEntityMap[TEntity]
     : unknown
-  : unknown;
+  : T extends `${string}.${infer TEntity}`
+    ? TEntity extends keyof TAllEntityMap
+      ? TAllEntityMap[TEntity]
+      : unknown
+    : unknown;
 
 export class PubSubImpl {
   private readonly _subscribers: Map<
