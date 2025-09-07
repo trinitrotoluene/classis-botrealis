@@ -5,6 +5,7 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
   ThreadAutoArchiveDuration,
+  ThreadChannel,
   userMention,
 } from "discord.js";
 import { commandDefinition } from "./sdk/CommandBuilder";
@@ -156,12 +157,17 @@ registerSubCommand("inventory", {
       return;
     }
 
-    const thread = await channel.threads.create({
-      name: `[auto] Inventory ${inventoryName}`,
-      reason:
-        "This thread automatically tracks changes in a bitcraft inventory",
-      autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
-    });
+    let thread: ThreadChannel;
+    if (i.channel.isThread()) {
+      thread = i.channel;
+    } else {
+      thread = await channel.threads.create({
+        name: `[auto] Inventory ${inventoryName}`,
+        reason:
+          "This thread automatically tracks changes in a bitcraft inventory",
+        autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
+      });
+    }
 
     const pendingContainer = new ContainerBuilder().addTextDisplayComponents(
       (c) =>
