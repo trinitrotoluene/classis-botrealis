@@ -149,24 +149,22 @@ registerSubCommand("inventory", {
     }
 
     const channel = i.channel;
-    if (!channel || channel.type !== ChannelType.GuildText) {
-      await i.reply({
-        content: "Unsupported channel type",
-        flags: MessageFlags.Ephemeral,
-      });
-      return;
-    }
-
     let thread: ThreadChannel;
-    if (i.channel.isThread()) {
+    if (i.channel?.isThread()) {
       thread = i.channel;
-    } else {
+    } else if (channel?.type === ChannelType.GuildText) {
       thread = await channel.threads.create({
         name: `[auto] Inventory ${inventoryName}`,
         reason:
           "This thread automatically tracks changes in a bitcraft inventory",
         autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
       });
+    } else {
+      await i.reply({
+        content: "Unsupported channel type",
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
     }
 
     const pendingContainer = new ContainerBuilder().addTextDisplayComponents(
