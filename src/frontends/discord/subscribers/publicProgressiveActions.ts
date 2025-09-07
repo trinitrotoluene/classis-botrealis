@@ -1,6 +1,9 @@
 import { ContainerBuilder, MessageFlags, Routes } from "discord.js";
 import { DiscordBot } from "../bot";
-import { type BitcraftPublicProgressiveAction } from "@src/vela";
+import {
+  type BitcraftPublicProgressiveAction,
+  type IEventContext,
+} from "@src/vela";
 import { logger } from "@src/logger";
 import GetPublicCraftQuery from "@src/application/queries/bitcraft/GetPublicCraftQuery";
 import { QueryBus } from "@src/framework";
@@ -13,6 +16,7 @@ const CraftAnnouncedSet = new Map<
 >();
 
 export async function onSharedCraftInserted(
+  _ctx: IEventContext,
   event: BitcraftPublicProgressiveAction,
 ) {
   const sharedCraftResult = await QueryBus.execute(
@@ -75,6 +79,7 @@ export async function onSharedCraftInserted(
 }
 
 export async function onSharedCraftDeleted(
+  _ctx: IEventContext,
   event: BitcraftPublicProgressiveAction,
 ) {
   const context = CraftAnnouncedSet.get(event.Id);

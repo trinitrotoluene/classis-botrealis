@@ -2,7 +2,7 @@ import GetEmpireSiegeContextQuery from "@src/application/queries/bitcraft/GetEmp
 import GetAllEmpireObservationThreadsQuery from "@src/application/queries/config/GetAllEmpireObservationThreadsQuery";
 import { QueryBus } from "@src/framework";
 import { logger } from "@src/logger";
-import type { BitcraftEmpireNodeSiegeState } from "@src/vela";
+import type { BitcraftEmpireNodeSiegeState, IEventContext } from "@src/vela";
 import { ContainerBuilder, MessageFlags } from "discord.js";
 import { DiscordBot } from "../bot";
 import { sign } from "@src/utils/sign";
@@ -25,6 +25,7 @@ async function getEmpireThreadIds(empireId: string) {
 }
 
 export async function onEmpireNodeSiegeStateAdded(
+  _ctx: IEventContext,
   state: BitcraftEmpireNodeSiegeState,
 ) {
   const subscribingThreads = await getEmpireThreadIds(state.EmpireId);
@@ -76,6 +77,7 @@ export async function onEmpireNodeSiegeStateAdded(
 }
 
 export async function onEmpireNodeSiegeStateUpdated(
+  _ctx: IEventContext,
   oldState: BitcraftEmpireNodeSiegeState,
   newState: BitcraftEmpireNodeSiegeState,
 ) {
@@ -129,6 +131,7 @@ export async function onEmpireNodeSiegeStateUpdated(
 }
 
 export async function onEmpireNodeSiegeStateDeleted(
+  _ctx: IEventContext,
   state: BitcraftEmpireNodeSiegeState,
 ) {
   const subscribingThreads = await getEmpireThreadIds(state.EmpireId);

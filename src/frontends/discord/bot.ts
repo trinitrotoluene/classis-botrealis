@@ -28,6 +28,7 @@ import {
   onEmpireNodeSiegeStateDeleted,
   onEmpireNodeSiegeStateUpdated,
 } from "./subscribers/empireNodeSiegeState";
+import { onInventoryStateUpdate } from "./subscribers/inventoryStateUpdate";
 
 export const DiscordBot = new Client({
   intents: [GatewayIntentBits.Guilds],
@@ -86,6 +87,11 @@ DiscordBot.on(Events.ClientReady, async (client) => {
   PubSub.subscribe(
     "bitcraft.BitcraftEmpireNodeSiegeState.delete",
     onEmpireNodeSiegeStateDeleted,
+  );
+
+  PubSub.subscribe(
+    "bitcraft.BitcraftInventoryState.update",
+    onInventoryStateUpdate,
   );
 });
 
@@ -191,6 +197,11 @@ DiscordBot.on(Events.InteractionCreate, async (interaction) => {
       },
       "command permissions out of sync",
     );
+
+    await interaction.reply({
+      content: "You don't have permission to run this command",
+      flags: MessageFlags.Ephemeral,
+    });
 
     return;
   }

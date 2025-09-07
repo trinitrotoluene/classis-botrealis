@@ -1,7 +1,7 @@
 import GetAllEmpireObservationThreadsQuery from "@src/application/queries/config/GetAllEmpireObservationThreadsQuery";
 import { EventAggregator, QueryBus } from "@src/framework";
 import { logger } from "@src/logger";
-import { type BitcraftEmpireState } from "@src/vela";
+import { type BitcraftEmpireState, type IEventContext } from "@src/vela";
 import { ContainerBuilder, MessageFlags } from "discord.js";
 import { DiscordBot } from "../bot";
 import { sign } from "@src/utils/sign";
@@ -11,6 +11,7 @@ const Aggregator = new EventAggregator<
 >();
 
 export async function onEmpireStateUpdated(
+  _ctx: IEventContext,
   oldState: BitcraftEmpireState,
   newState: BitcraftEmpireState,
 ) {

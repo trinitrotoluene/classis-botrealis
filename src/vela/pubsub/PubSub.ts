@@ -1,11 +1,17 @@
 import { logger } from "@src/logger";
 import type { Envelope, TRedisChannels, UpdateEnvelope } from "./types";
-import type { TAllEntityMap } from "../__generated__";
+import type { BitcraftUsernameState, TAllEntityMap } from "../__generated__";
 import { getRedisSubscriber } from "../redis/redisClient";
+import { CacheClient } from "../cache";
 
-type SubscriberHandler<T extends string> = T extends `${string}.update`
-  ? (oldVal: Entity<T>, newVal: Entity<T>) => void
-  : (val: Entity<T>) => void;
+export interface IEventContext {
+  player?: BitcraftUsernameState;
+  module: string;
+}
+
+export type SubscriberHandler<T extends string> = T extends `${string}.update`
+  ? (context: IEventContext, oldVal: Entity<T>, newVal: Entity<T>) => void
+  : (context: IEventContext, val: Entity<T>) => void;
 
 type Entity<T extends string> = T extends `${string}.${infer TEntity}.${string}`
   ? TEntity extends keyof TAllEntityMap
@@ -35,16 +41,30 @@ export class PubSubImpl {
       | Envelope<unknown>
       | UpdateEnvelope<unknown>;
 
+    const userState = await CacheClient.getAll(
+      "BitcraftUserState",
+      parsedData.Module,
+    );
+
+    const identity = userState.get(parsedData.CallerIdentity);
+    const player = await CacheClient.getByIdGlobal(
+      "BitcraftUsernameState",
+      identity?.UserEntityId ?? "",
+    );
+
     logger.info(`Parsed pub/sub message on channel ${channel}`, {
       channel,
       module: parsedData.Module,
       version: parsedData.Version,
+      player: player,
     });
 
+    const context: IEventContext = { player, module: parsedData.Module };
+
     if ("Entity" in parsedData) {
-      await subscriber(parsedData.Entity);
+      await subscriber(context, parsedData.Entity);
     } else {
-      await subscriber(parsedData.OldEntity, parsedData.NewEntity);
+      await subscriber(context, parsedData.OldEntity, parsedData.NewEntity);
     }
   }
 

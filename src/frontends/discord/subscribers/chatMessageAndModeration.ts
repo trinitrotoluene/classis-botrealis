@@ -6,13 +6,17 @@ import { logger } from "@src/logger";
 import type {
   BitcraftChatMessage,
   BitcraftUserModerationState,
+  IEventContext,
 } from "@src/vela";
 import { MessageFlags, WebhookClient } from "discord.js";
 import { DiscordBot } from "../bot";
 
 const clientCache: Record<string, WebhookClient> = {};
 
-export async function onBitcraftChatMessage(payload: BitcraftChatMessage) {
+export async function onBitcraftChatMessage(
+  _ctx: IEventContext,
+  payload: BitcraftChatMessage,
+) {
   const response = await QueryBus.execute(
     new GetAllWebhooksForChannelQuery({ channelId: payload.ChannelId }),
   );
@@ -46,6 +50,7 @@ export async function onBitcraftChatMessage(payload: BitcraftChatMessage) {
 }
 
 export async function onBitcraftUserModerated(
+  _ctx: IEventContext,
   payload: BitcraftUserModerationState,
 ) {
   const response = await QueryBus.execute(
