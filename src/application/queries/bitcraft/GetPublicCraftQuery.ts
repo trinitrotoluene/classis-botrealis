@@ -104,7 +104,7 @@ export default class GetPublicCraftQuery extends CommandBase<
 
     const effort = (recipe.actions_required ?? 0) * linkedState.CraftCount;
 
-    if (effort < 50_000) {
+    if (effort - linkedState.Progress < 50_000) {
       logger.debug(
         `Craft does not meet notification threshold (${effort} effort)`,
       );
