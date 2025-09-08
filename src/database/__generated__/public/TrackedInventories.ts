@@ -24,6 +24,8 @@ export default interface TrackedInventoriesTable {
   target_channel_id: ColumnType<string, string, string>;
 
   bitcraft_inventory_id: ColumnType<string, string, string>;
+
+  discord_server_id: ColumnType<string, string, string>;
 }
 
 export type TrackedInventories = Selectable<TrackedInventoriesTable>;

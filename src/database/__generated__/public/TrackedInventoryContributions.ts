@@ -1,3 +1,4 @@
+import type { TrackedInventoryContributionSessionsId } from "./TrackedInventoryContributionSessions";
 import type { ColumnType, Selectable, Insertable, Updateable } from "kysely";
 
 /** Identifier type for public.tracked_inventory_contributions */
@@ -20,6 +21,12 @@ export default interface TrackedInventoryContributionsTable {
   change: ColumnType<number, number, number>;
 
   bitcraft_user_id: ColumnType<string | null, string | null, string | null>;
+
+  session_id: ColumnType<
+    TrackedInventoryContributionSessionsId,
+    TrackedInventoryContributionSessionsId,
+    TrackedInventoryContributionSessionsId
+  >;
 }
 
 export type TrackedInventoryContributions =

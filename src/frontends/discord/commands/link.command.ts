@@ -170,13 +170,14 @@ registerSubCommand("inventory", {
     const pendingContainer = new ContainerBuilder().addTextDisplayComponents(
       (c) =>
         c.setContent(
-          `⏳ Inventory tracking pending, please add an item to the target inventory to complete setup`,
+          `⏳ Inventory tracking pending, waiting for ${userMention(i.user.id)} to add an item to the target inventory to complete setup`,
         ),
     );
 
     const message = await thread.send({
       components: [pendingContainer],
       flags: MessageFlags.IsComponentsV2,
+      allowedMentions: {},
     });
 
     try {
@@ -192,6 +193,7 @@ registerSubCommand("inventory", {
         discordChannelId: thread.id,
         discordMessageId: message.id,
         creatorDiscordId: i.user.id,
+        discordServerId: i.guildId,
       }),
     );
 

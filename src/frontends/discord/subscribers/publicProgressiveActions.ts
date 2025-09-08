@@ -31,7 +31,7 @@ export async function onSharedCraftInserted(
     sharedCraftResult.data;
 
   const serversToNotify = await QueryBus.execute(
-    new GetAllSharedCraftThreadsQuery({}),
+    new GetAllSharedCraftThreadsQuery({ module: event.Module }),
   );
 
   if (!serversToNotify.ok) {

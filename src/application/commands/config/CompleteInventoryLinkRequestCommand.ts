@@ -36,7 +36,7 @@ export default class CompleteInventoryLinkRequestCommand extends CommandBase<
         .where("id", "=", linkRequest.id)
         .execute();
 
-      await txn
+      const insertResult = await txn
         .insertInto("tracked_inventories")
         .values({
           name: linkRequest.name,
@@ -45,6 +45,19 @@ export default class CompleteInventoryLinkRequestCommand extends CommandBase<
           target_channel_id: linkRequest.target_channel_id,
           status_message_id: linkRequest.status_message_id,
           bitcraft_inventory_id: this.args.bitcraftInventoryId,
+          discord_server_id: linkRequest.discord_server_id,
+        })
+        .returningAll()
+        .executeTakeFirstOrThrow();
+
+      if (insertResult.id === undefined) {
+        throw new Error("Failed to insert new tracked inventory");
+      }
+
+      await txn
+        .insertInto("tracked_inventory_contribution_sessions")
+        .values({
+          tracked_inventory_id: insertResult.id,
         })
         .execute();
     });

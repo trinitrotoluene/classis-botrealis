@@ -7,6 +7,7 @@ interface Args {
   discordMessageId: string;
   creatorDiscordId: string;
   creatorLinkedBitcraftAccountId: string;
+  discordServerId: string;
 }
 
 type Response = object;
@@ -30,6 +31,7 @@ export default class CreateInventoryLinkRequestCommand extends CommandBase<
         target_channel_id: this.args.discordChannelId,
         creator_bitcraft_id: this.args.creatorLinkedBitcraftAccountId,
         name: this.args.trackedInventoryName,
+        discord_server_id: this.args.discordServerId,
       })
       .execute();
 

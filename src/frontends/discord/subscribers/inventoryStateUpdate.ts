@@ -2,7 +2,7 @@ import GetChannelsLinkedToInventoryQuery from "@src/application/queries/bitcraft
 import GetInventoryStateChangeInfoQuery, {
   type Response,
 } from "@src/application/queries/bitcraft/GetInventoryStateChangeInfoQuery";
-import { CommandBus, QueryBus } from "@src/framework";
+import { CommandBus, QueryBus, type CommandResult } from "@src/framework";
 import type { BitcraftInventoryState, IEventContext } from "@src/vela";
 import { ContainerBuilder, MessageFlags } from "discord.js";
 import { DiscordBot } from "../bot";
@@ -55,42 +55,34 @@ export async function onInventoryStateUpdate(
     return;
   }
 
-  // Log contributions to the DB before notifying the channel.
-  for (const change of diff.values()) {
-    await CommandBus.execute(
-      new PushToContributionLogCommand({
-        bitcraftPlayerId: ctx.player?.Id,
-        inventoryId: newState.Id,
-        itemId: change.itemId,
-        change: change.diff,
-      }),
-    );
-  }
-
   // Push to all subscribed channels
   await Promise.allSettled(
     getTrackedInventoriesResponse.data.map((x) =>
-      notifyTrackingChannels(
-        ctx,
-        x.name,
-        x.channelId,
-        x.messageId,
-        inventoryState,
-        diff,
-      ),
+      notifyTrackingChannels(ctx, x, newState.Id, inventoryState, diff),
     ),
   );
 }
 
 async function notifyTrackingChannels(
   ctx: IEventContext,
-  inventoryName: string,
-  channelId: string,
-  messageId: string,
+  tracking: CommandResult<GetChannelsLinkedToInventoryQuery>[0],
+  inventoryId: string,
   inventoryState: Response["newState"],
   diff: Response["diff"],
 ) {
-  const heading = `## Tracking: ${inventoryName}`;
+  for (const change of diff.values()) {
+    await CommandBus.execute(
+      new PushToContributionLogCommand({
+        bitcraftPlayerId: ctx.player?.Id,
+        inventoryId: inventoryId,
+        itemId: change.itemId,
+        change: change.diff,
+        sessionId: tracking.contributionSessionId,
+      }),
+    );
+  }
+
+  const heading = `## Tracking: ${tracking.inventoryDisplayName}`;
   const currentStateDisplay = Array.from(
     inventoryState.values().map((data) => {
       return `\`${data.quantity.toString().padEnd(5, " ")} T${data.tier ?? "?"} ${data.name ?? data.id} ${data.rarity !== "Common" ? "" : (data.rarity ?? "n/a")}\``;
@@ -112,12 +104,15 @@ async function notifyTrackingChannels(
     c.setContent(diffDisplay),
   );
 
-  const targetChannel = await DiscordBot.channels.fetch(channelId);
+  const targetChannel = await DiscordBot.channels.fetch(
+    tracking.discordChannelId,
+  );
+
   if (!targetChannel?.isSendable()) {
     return;
   }
 
-  const message = await targetChannel.messages.fetch(messageId);
+  const message = await targetChannel.messages.fetch(tracking.discordMessageId);
   await message.edit({
     components: [replacementContainer],
     flags: MessageFlags.IsComponentsV2,

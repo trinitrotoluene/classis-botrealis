@@ -28,6 +28,7 @@ describe("CreateUserLinkRequestCommand", () => {
           creator_bitcraft_id: "bitcraft-user-1",
           target_channel_id: "111",
           status_message_id: "1111",
+          discord_server_id: "discord-server-id",
         },
         {
           id: "2" as TrackedInventoryRequestsId,
@@ -36,6 +37,7 @@ describe("CreateUserLinkRequestCommand", () => {
           creator_bitcraft_id: "22",
           target_channel_id: "222",
           status_message_id: "2222",
+          discord_server_id: "discord-server-id",
         },
       ])
       .execute();
@@ -72,6 +74,18 @@ describe("CreateUserLinkRequestCommand", () => {
         name: "cool stall 1",
         target_channel_id: "111",
         status_message_id: "1111",
+        discord_server_id: "discord-server-id",
+      },
+    ]);
+
+    const sessions = await db
+      .selectFrom("tracked_inventory_contribution_sessions")
+      .selectAll()
+      .execute();
+
+    expect(sessions).toEqual([
+      {
+        id: "1",
       },
     ]);
   });

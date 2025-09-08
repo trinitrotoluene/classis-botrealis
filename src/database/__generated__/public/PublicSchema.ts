@@ -1,3 +1,4 @@
+import type { default as TrackedInventoryContributionSessionsTable } from "./TrackedInventoryContributionSessions";
 import type { default as RecipesTable } from "./Recipes";
 import type { default as ItemsTable } from "./Items";
 import type { default as KyselyMigrationLockTable } from "./KyselyMigrationLock";
@@ -10,6 +11,8 @@ import type { default as TrackedInventoryContributionsTable } from "./TrackedInv
 import type { default as UserLinkRequestsTable } from "./UserLinkRequests";
 
 export default interface PublicSchema {
+  tracked_inventory_contribution_sessions: TrackedInventoryContributionSessionsTable;
+
   recipes: RecipesTable;
 
   items: ItemsTable;

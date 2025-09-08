@@ -18,7 +18,10 @@ export async function onBitcraftChatMessage(
   payload: BitcraftChatMessage,
 ) {
   const response = await QueryBus.execute(
-    new GetAllWebhooksForChannelQuery({ channelId: payload.ChannelId }),
+    new GetAllWebhooksForChannelQuery({
+      module: payload.Module ?? "",
+      channelId: payload.ChannelId,
+    }),
   );
 
   if (!response.ok) {
@@ -54,7 +57,10 @@ export async function onBitcraftUserModerated(
   payload: BitcraftUserModerationState,
 ) {
   const response = await QueryBus.execute(
-    new GetAllWebhooksForChannelQuery({ channelId: ChannelId.Region }),
+    new GetAllWebhooksForChannelQuery({
+      module: payload.Module ?? "",
+      channelId: ChannelId.Region,
+    }),
   );
 
   if (!response.ok) {

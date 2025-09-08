@@ -22,6 +22,8 @@ export default interface TrackedInventoryRequestsTable {
   creator_bitcraft_id: ColumnType<string, string, string>;
 
   target_channel_id: ColumnType<string, string, string>;
+
+  discord_server_id: ColumnType<string, string, string>;
 }
 
 export type TrackedInventoryRequests =

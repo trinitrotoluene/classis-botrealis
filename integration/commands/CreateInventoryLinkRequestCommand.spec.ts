@@ -22,6 +22,7 @@ describe("CreateInventoryLinkRequestCommand", () => {
           creator_bitcraft_id: "11",
           target_channel_id: "111",
           status_message_id: "1111",
+          discord_server_id: "discord-server-id",
         },
         {
           name: "cool stall 2",
@@ -29,6 +30,7 @@ describe("CreateInventoryLinkRequestCommand", () => {
           creator_bitcraft_id: "22",
           target_channel_id: "222",
           status_message_id: "2222",
+          discord_server_id: "discord-server-id",
         },
       ])
       .execute();
@@ -40,6 +42,7 @@ describe("CreateInventoryLinkRequestCommand", () => {
         discordChannelId: "discord-channel-id",
         creatorLinkedBitcraftAccountId: "111",
         discordMessageId: "discord-message-id",
+        discordServerId: "discord-server-id",
       }),
     );
 
@@ -64,6 +67,7 @@ describe("CreateInventoryLinkRequestCommand", () => {
         name: "cool stall 2",
         target_channel_id: "222",
         status_message_id: "2222",
+        discord_server_id: "discord-server-id",
       },
       // other pending request is deleted
       {
@@ -73,6 +77,7 @@ describe("CreateInventoryLinkRequestCommand", () => {
         name: "cool stall 3",
         target_channel_id: "discord-channel-id",
         status_message_id: "discord-message-id",
+        discord_server_id: "discord-server-id",
       },
     ]);
   });

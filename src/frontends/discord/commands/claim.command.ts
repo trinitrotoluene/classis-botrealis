@@ -105,10 +105,12 @@ registerSubCommand("configure", {
     );
     if (result.ok) {
       i.respond(
-        result.data.results.map((x) => ({
-          name: x.name,
-          value: x.entityId,
-        })),
+        result.data.results
+          .map((x) => ({
+            name: x.name,
+            value: x.entityId,
+          }))
+          .slice(0, 25),
       );
     }
   },
