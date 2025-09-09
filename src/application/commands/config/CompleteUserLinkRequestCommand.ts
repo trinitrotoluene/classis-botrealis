@@ -3,6 +3,7 @@ import type { UserLinksBitcraftUserId } from "@src/database/__generated__/public
 import { ChannelId, CommandBase } from "@src/framework";
 import type { BitcraftChatMessage } from "@src/vela";
 import { validateOtp } from "./CreateUserLinkRequestCommand";
+import { logger } from "@src/logger";
 
 type Args = Pick<
   BitcraftChatMessage,
@@ -44,6 +45,10 @@ export default class CompleteUserLinkRequestCommand extends CommandBase<
     }
 
     const linkRequest = linkRequests[0];
+    logger.info(
+      { args: this.args, linkRequest },
+      "Completing user link request",
+    );
 
     return db.transaction().execute(async (txn) => {
       await txn
@@ -59,6 +64,8 @@ export default class CompleteUserLinkRequestCommand extends CommandBase<
           is_primary_account: false, // not currently in use
         })
         .execute();
+
+      logger.info({ linkRequest }, "User linked successfully");
 
       return {
         outcome: "Linked" as const,

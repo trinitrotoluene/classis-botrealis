@@ -66,7 +66,6 @@ registerSubCommand("summary", {
     }
 
     const { contributionsByPlayer } = contributionResponse.data;
-
     const contributionsDisplay: string[] = [];
 
     for (const [, contributions] of contributionsByPlayer.entries()) {

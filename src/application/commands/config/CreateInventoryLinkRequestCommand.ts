@@ -1,5 +1,6 @@
 import { db } from "@src/database";
 import { CommandBase } from "@src/framework";
+import { logger } from "@src/logger";
 
 interface Args {
   trackedInventoryName: string;
@@ -17,6 +18,7 @@ export default class CreateInventoryLinkRequestCommand extends CommandBase<
   Response
 > {
   async execute() {
+    logger.info({ args: this.args }, "Creating inventory link request");
     // you can only have 1 link request in flight at a time
     await db
       .deleteFrom("tracked_inventory_requests")

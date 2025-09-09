@@ -2,6 +2,7 @@ import { db } from "@src/database";
 import type { TrackedInventoriesId } from "@src/database/__generated__/public/TrackedInventories";
 import type { TrackedInventoryContributionSessionsId } from "@src/database/__generated__/public/TrackedInventoryContributionSessions";
 import { CommandBase } from "@src/framework";
+import { logger } from "@src/logger";
 
 type Args = {
   sessionId: string;
@@ -18,6 +19,8 @@ export default class PushToContributionLogCommand extends CommandBase<
   Response
 > {
   async execute() {
+    logger.info(this.args, "Logging contribution");
+
     return db
       .insertInto("tracked_inventory_contributions")
       .values({

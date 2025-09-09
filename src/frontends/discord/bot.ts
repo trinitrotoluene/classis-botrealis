@@ -212,7 +212,7 @@ DiscordBot.on(Events.InteractionCreate, async (interaction) => {
   try {
     logger.info(
       {
-        commandName: interaction.command?.name,
+        commandName: interaction.commandName,
         subCommand: interaction.options.getSubcommand(),
         options: interaction.options.data,
         guildId: interaction.guildId,

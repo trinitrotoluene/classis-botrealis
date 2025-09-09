@@ -112,6 +112,7 @@ async function sendWebhook(
       allowedMentions: {},
     });
   } catch (error) {
+    // todo track failures in-memory and delete the config if too many in a (long) interval
     logger.error(
       { error, config, options },
       `Failed to send message via webhook`,

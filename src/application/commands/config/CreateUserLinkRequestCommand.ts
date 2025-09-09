@@ -1,6 +1,7 @@
 import { Temporal } from "@js-temporal/polyfill";
 import { db } from "@src/database";
 import { CommandBase } from "@src/framework";
+import { logger } from "@src/logger";
 import { customAlphabet } from "nanoid";
 
 interface Args {
@@ -27,6 +28,7 @@ export default class CreateUserLinkRequestCommand extends CommandBase<
   Response
 > {
   async execute() {
+    logger.info({ args: this.args }, "Creating user link request");
     // you can only have 1 link request in flight at a time
     await db
       .deleteFrom("user_link_requests")

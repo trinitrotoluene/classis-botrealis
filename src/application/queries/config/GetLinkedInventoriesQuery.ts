@@ -7,6 +7,7 @@ type Args = {
 };
 
 type Response = Array<{
+  trackedInventoryId: string;
   inventoryDisplayName: string;
   discordChannelId: string;
   discordMessageId: string;
@@ -32,6 +33,7 @@ export default class GetLinkedInventoriesQuery extends CommandBase<
 
     const links = await query.execute();
     return links.map((x) => ({
+      trackedInventoryId: x.id,
       inventoryDisplayName: x.name,
       discordChannelId: x.target_channel_id,
       discordMessageId: x.status_message_id,

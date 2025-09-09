@@ -36,39 +36,49 @@ export class PubSubImpl {
   }
 
   async handleMessage(_pattern: string, channel: string, message: string) {
-    const subscriber = this._subscribers.get(channel);
-    if (!subscriber) {
-      return;
-    }
+    try {
+      const subscriber = this._subscribers.get(channel);
+      if (!subscriber) {
+        return;
+      }
 
-    const parsedData = JSON.parse(message) as
-      | Envelope<unknown>
-      | UpdateEnvelope<unknown>;
+      const parsedData = JSON.parse(message) as
+        | Envelope<unknown>
+        | UpdateEnvelope<unknown>;
 
-    const userState = await CacheClient.getAll(
-      "BitcraftUserState",
-      parsedData.Module,
-    );
+      const userState = await CacheClient.getAll(
+        "BitcraftUserState",
+        parsedData.Module,
+      );
 
-    const identity = userState.get(parsedData.CallerIdentity);
-    const player = await CacheClient.getByIdGlobal(
-      "BitcraftUsernameState",
-      identity?.UserEntityId ?? "",
-    );
+      const identity = userState.get(parsedData.CallerIdentity);
+      const player = await CacheClient.getByIdGlobal(
+        "BitcraftUsernameState",
+        identity?.UserEntityId ?? "",
+      );
 
-    logger.info(`Parsed pub/sub message on channel ${channel}`, {
-      channel,
-      module: parsedData.Module,
-      version: parsedData.Version,
-      player: player,
-    });
+      logger.info(
+        {
+          channel,
+          module: parsedData.Module,
+          version: parsedData.Version,
+          player: player,
+        },
+        `Parsed pub/sub message on channel ${channel}`,
+      );
 
-    const context: IEventContext = { player, module: parsedData.Module };
+      const context: IEventContext = { player, module: parsedData.Module };
 
-    if ("Entity" in parsedData) {
-      await subscriber(context, parsedData.Entity);
-    } else {
-      await subscriber(context, parsedData.OldEntity, parsedData.NewEntity);
+      if ("Entity" in parsedData) {
+        await subscriber(context, parsedData.Entity);
+      } else {
+        await subscriber(context, parsedData.OldEntity, parsedData.NewEntity);
+      }
+    } catch (error) {
+      logger.error(
+        { error, channel, message },
+        "Error handling pub/sub message",
+      );
     }
   }
 

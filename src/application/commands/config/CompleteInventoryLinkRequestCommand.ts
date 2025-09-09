@@ -1,5 +1,6 @@
 import { db } from "@src/database";
 import { CommandBase } from "@src/framework";
+import { logger } from "@src/logger";
 
 type Args = {
   bitcraftUserId: string;
@@ -29,6 +30,10 @@ export default class CompleteInventoryLinkRequestCommand extends CommandBase<
     }
 
     const linkRequest = linkRequests[0];
+    logger.info(
+      { args: this.args, linkRequest },
+      "Completing inventory link request",
+    );
 
     await db.transaction().execute(async (txn) => {
       await txn
@@ -60,6 +65,11 @@ export default class CompleteInventoryLinkRequestCommand extends CommandBase<
           tracked_inventory_id: insertResult.id,
         })
         .execute();
+
+      logger.info(
+        { args: this.args, trackedInventoryId: insertResult.id },
+        "Completed inventory link request",
+      );
     });
 
     return {
