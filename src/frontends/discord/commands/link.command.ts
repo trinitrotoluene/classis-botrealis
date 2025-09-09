@@ -15,6 +15,8 @@ import GetAllLinkedBitcraftAccountsQuery from "@src/application/queries/config/G
 import { logger } from "@src/logger";
 import CreateInventoryLinkRequestCommand from "@src/application/commands/config/CreateInventoryLinkRequestCommand";
 
+export const requiredPermissions = PermissionFlagsBits.ManageMessages;
+
 export const data = new SlashCommandBuilder()
   .setName("link")
   .setDescription("Link your Discord account to a Bitcraft account")

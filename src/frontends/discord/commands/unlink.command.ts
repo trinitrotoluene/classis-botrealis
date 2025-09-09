@@ -1,8 +1,14 @@
-import { MessageFlags, SlashCommandBuilder } from "discord.js";
+import {
+  MessageFlags,
+  PermissionFlagsBits,
+  SlashCommandBuilder,
+} from "discord.js";
 import { commandDefinition } from "./sdk/CommandBuilder";
 import GetLinkedInventoriesQuery from "@src/application/queries/config/GetLinkedInventoriesQuery";
 import { CommandBus, QueryBus } from "@src/framework";
 import DeleteInventoryLinkCommand from "@src/application/commands/config/DeleteInventoryLinkCommand";
+
+export const requiredPermissions = PermissionFlagsBits.ManageMessages;
 
 export const data = new SlashCommandBuilder()
   .setName("unlink")
