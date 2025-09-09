@@ -25,7 +25,7 @@ export const data = new SlashCommandBuilder()
           .setAutocomplete(true)
           .setRequired(true)
           .setDescription(
-            "The bitcraft user to remove from your Discord account - use /link view-players to see linked accounts",
+            "The bitcraft user to remove from your Discord account",
           ),
       ),
   )
