@@ -7,8 +7,8 @@ import { commandDefinition } from "./sdk/CommandBuilder";
 import GetLinkedInventoriesQuery from "@src/application/queries/config/GetLinkedInventoriesQuery";
 import { CommandBus, QueryBus } from "@src/framework";
 import DeleteInventoryLinkCommand from "@src/application/commands/config/DeleteInventoryLinkCommand";
-
-export const requiredPermissions = PermissionFlagsBits.ManageMessages;
+import GetAllLinkedBitcraftAccountsQuery from "@src/application/queries/config/GetAllLinkedBitcraftAccountsQuery";
+import DeleteUserLinkCommand from "@src/application/commands/config/DeleteUserLinkCommand";
 
 export const data = new SlashCommandBuilder()
   .setName("unlink")
@@ -18,6 +18,15 @@ export const data = new SlashCommandBuilder()
       .setName("player")
       .setDescription(
         "Remove a link between your Discord and Bitcraft accounts",
+      )
+      .addStringOption((o) =>
+        o
+          .setName("user")
+          .setAutocomplete(true)
+          .setRequired(true)
+          .setDescription(
+            "The bitcraft user to remove from your Discord account - use /link view-players to see linked accounts",
+          ),
       ),
   )
   .addSubcommand((s) =>
@@ -38,6 +47,7 @@ export const execute = command.execute;
 export const autocomplete = command.autocomplete;
 
 registerSubCommand("inventory", {
+  requiredPermissions: PermissionFlagsBits.ManageMessages,
   async autocomplete(i) {
     if (!i.inGuild()) {
       i.respond([]);
@@ -71,6 +81,44 @@ registerSubCommand("inventory", {
 
     await i.reply({
       content: `No longer tracking this inventory.`,
+      flags: MessageFlags.Ephemeral,
+    });
+  },
+});
+
+registerSubCommand("player", {
+  async autocomplete(i) {
+    const linkedAccountsResponse = await QueryBus.execute(
+      new GetAllLinkedBitcraftAccountsQuery({ discordUserId: i.user.id }),
+    );
+
+    if (!linkedAccountsResponse.ok) {
+      i.respond([]);
+      return;
+    }
+
+    await i.respond(
+      linkedAccountsResponse.data.map((x) => ({
+        name: x.username,
+        value: x.id,
+      })),
+    );
+  },
+  async execute(i) {
+    const bitcraftUserId = i.options.getString("user", true);
+    const result = await CommandBus.execute(
+      new DeleteUserLinkCommand({
+        id: bitcraftUserId,
+        discordUserId: i.user.id,
+      }),
+    );
+
+    if (!result.ok) {
+      throw new Error("Failed to delete user link");
+    }
+
+    await i.reply({
+      content: `Link removed! You can re-link your account at any time using /link.`,
       flags: MessageFlags.Ephemeral,
     });
   },
