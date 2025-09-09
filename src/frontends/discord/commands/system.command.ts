@@ -37,9 +37,14 @@ registerSubCommand("status", {
   async execute(i) {
     const status = getServiceStatus();
     const botDisplay = formatBotStatus(status);
+
+    const sortedServices = status.services.sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
+
     const serviceDisplay =
-      status.services.length > 0
-        ? status.services.map(formatService).join("\n")
+      sortedServices.length > 0
+        ? sortedServices.map(formatService).join("\n")
         : "Offline";
 
     await i.reply({
