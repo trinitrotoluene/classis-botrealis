@@ -74,6 +74,11 @@ registerSubCommand("summary", {
         const itemInfo = await QueryBus.execute(
           new GetItemQuery({ id: itemId }),
         );
+
+        if (data.netContribution === 0) {
+          continue;
+        }
+
         playerDisplayLines.push(
           `${data.playerName ?? data.playerId} ➡️ ${itemInfo.ok ? itemInfo.data?.name : itemId} ${data.netContribution}`,
         );
