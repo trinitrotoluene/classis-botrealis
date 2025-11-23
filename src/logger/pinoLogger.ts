@@ -55,7 +55,7 @@ function truncateArrays(
 
 export const logger = pino(
   {
-    level: isProd ? "info" : "debug",
+    level: isProd ? "info" : "info",
     hooks: {
       logMethod(rawArg, method) {
         const sanitizedArgs = truncateArrays(rawArg);

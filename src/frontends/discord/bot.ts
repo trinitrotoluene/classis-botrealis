@@ -30,6 +30,12 @@ import {
 } from "./subscribers/empireNodeSiegeState";
 import { onInventoryStateUpdate } from "./subscribers/inventoryStateUpdate";
 import { onHeartbeat } from "./subscribers/heartbeat";
+import {
+  onCargoItemInserted,
+  onCargoItemUpdated,
+  onCargoItemDeleted,
+} from "./subscribers/items";
+import { onClaimLocalStateChanged } from "./subscribers/claimLocalState";
 
 export const DiscordBot = new Client({
   intents: [GatewayIntentBits.Guilds],
@@ -96,6 +102,15 @@ DiscordBot.on(Events.ClientReady, async (client) => {
   );
 
   PubSub.subscribe("system.HeartbeatEvent", onHeartbeat);
+
+  PubSub.subscribe("bitcraft.BitcraftCargoItem.insert", onCargoItemInserted);
+  PubSub.subscribe("bitcraft.BitcraftCargoItem.update", onCargoItemUpdated);
+  PubSub.subscribe("bitcraft.BitcraftCargoItem.delete", onCargoItemDeleted);
+
+  PubSub.subscribe(
+    "bitcraft.BitcraftClaimLocalState.update",
+    onClaimLocalStateChanged,
+  );
 });
 
 DiscordBot.on(Events.GuildAvailable, (guild) => {

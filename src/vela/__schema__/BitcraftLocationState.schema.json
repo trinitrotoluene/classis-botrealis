@@ -7,6 +7,9 @@
     "Z": {
       "type": "integer"
     },
+    "Dimension": {
+      "type": "integer"
+    },
     "Id": {
       "type": "string"
     },
@@ -14,5 +17,5 @@
       "type": "string"
     }
   },
-  "required": ["X", "Z", "Id"]
+  "required": ["X", "Z", "Dimension", "Id"]
 }

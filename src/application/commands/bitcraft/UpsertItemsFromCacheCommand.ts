@@ -3,6 +3,10 @@ import type {
   ItemsId,
   NewItems,
 } from "@src/database/__generated__/public/Items";
+import type {
+  CargoItemsId,
+  NewCargoItems,
+} from "@src/database/__generated__/public/CargoItems";
 import { CommandBase } from "@src/framework";
 import { chunkIterator } from "@src/framework/chunkIterator";
 import { logger } from "@src/logger";
@@ -51,6 +55,39 @@ export default class UpsertItemsFromCacheCommand extends CommandBase<
         )
         .execute();
     }
+
+    const cargoItemsData = await CacheClient.getAllGlobal("BitcraftCargoItem");
+    const cargoItems = cargoItemsData.values().toArray();
+
+    logger.info(`Initialising cargo item data with ${cargoItems.length} items`);
+    // Go 750 items at a time
+    for (const chunk of chunkIterator(cargoItems, 750)) {
+      const values: NewCargoItems[] = chunk.map((item) => ({
+        id: item.Id as CargoItemsId,
+        name: item.Name,
+        description: item.Description ?? null,
+        volume: item.Volume,
+        tier: item.Tier === -1 ? 0 : item.Tier,
+        rarity: item.Rarity,
+      }));
+
+      await db
+        .insertInto("cargo_items")
+        .values(values)
+        .onConflict((oc) =>
+          oc.column("id").doUpdateSet((eb) => ({
+            name: eb.ref("excluded.name"),
+            description: eb.ref("excluded.description"),
+            volume: eb.ref("excluded.volume"),
+            tier: eb.ref("excluded.tier"),
+            rarity: eb.ref("excluded.rarity"),
+          })),
+        )
+        .execute();
+    }
+
+    logger.info(`Item data initialisation complete`);
+
     return undefined;
   }
 }

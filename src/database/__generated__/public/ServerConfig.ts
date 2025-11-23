@@ -69,6 +69,12 @@ export default interface ServerConfigTable {
     string | null,
     string | null
   >;
+
+  supply_alert_channel_id: ColumnType<
+    string | null,
+    string | null,
+    string | null
+  >;
 }
 
 export type ServerConfig = Selectable<ServerConfigTable>;

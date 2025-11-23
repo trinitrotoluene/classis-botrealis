@@ -25,6 +25,7 @@ for (const file of files) {
 
     let ts = await compileFromFile(inputPath, {});
     ts = ts.replaceAll("[k: string]: unknown;", "");
+    ts = ts.replaceAll("/* eslint-disable */", "");
 
     fs.writeFileSync(outputPath, ts);
     logger.info(`Generated: ${outputPath}`);

@@ -1,4 +1,5 @@
 import { db } from "@src/database";
+import type { CargoItemsId } from "@src/database/__generated__/public/CargoItems";
 import type { ItemsId } from "@src/database/__generated__/public/Items";
 import { CommandBase } from "@src/framework";
 
@@ -37,5 +38,24 @@ export default class GetItemQuery extends CommandBase<
         itemListId: result.item_list_id,
       };
     }
+
+    const cargoResult = await db
+      .selectFrom("cargo_items")
+      .selectAll()
+      .where("id", "=", this.args.id as CargoItemsId)
+      .executeTakeFirst();
+
+    if (cargoResult) {
+      return {
+        id: cargoResult.id,
+        name: cargoResult.name,
+        description: cargoResult.description ?? "",
+        tier: cargoResult.tier as Response["tier"],
+        rarity: cargoResult.rarity as Response["rarity"],
+        volume: cargoResult.volume,
+      };
+    }
+
+    return undefined;
   }
 }

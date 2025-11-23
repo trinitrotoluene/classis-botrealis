@@ -4,10 +4,14 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface BitcraftLocationState {
-  X: number;
-  Z: number;
-  Dimension: number;
+export interface BitcraftClaimLocalState {
+  Location: {
+    X: number;
+    Z: number;
+    Dimension: number;
+  } | null;
+  Supplies: number;
+  Treasury: number;
   Id: string;
   Module?: string;
 }

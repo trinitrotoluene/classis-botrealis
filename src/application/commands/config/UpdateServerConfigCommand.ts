@@ -23,6 +23,7 @@ interface Args {
   removeFeatures?: Array<ServerFeature>;
   addObservedEmpires?: Array<string>;
   removeObservedEmpires?: Array<string>;
+  supplyAlertChannelId?: string | null;
 }
 
 export default class UpdateServerConfigCommand extends CommandBase<Args, void> {
@@ -81,6 +82,10 @@ export default class UpdateServerConfigCommand extends CommandBase<Args, void> {
 
     if (this.args.sharedCraftThreadId !== undefined) {
       newConfig.shared_craft_thread_id = this.args.sharedCraftThreadId;
+    }
+
+    if (this.args.supplyAlertChannelId !== undefined) {
+      newConfig.supply_alert_channel_id = this.args.supplyAlertChannelId;
     }
 
     if (this.args.observingEmpireLogsThreadId !== undefined) {

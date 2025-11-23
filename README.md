@@ -37,7 +37,6 @@ Get a price check on items, using quantity weighted average & excluding outliers
 
 <img width="384" height="365" alt="image" src="https://github.com/user-attachments/assets/5e2dbab8-88c7-4dac-ad78-474a0671ba19" />
 
-
 ## Contributions
 
 In general I welcome contributions. However, please reach out BEFORE spending time building a feature so we can discuss it!

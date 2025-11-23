@@ -18,7 +18,6 @@ export class CommandBusImpl {
       logger.debug({ args: command.args }, `Executing ${command}`);
 
       const result = await command.execute();
-      logger.debug("OK");
 
       return new SuccessResult(
         result as Awaited<ReturnType<TCommand["execute"]>>,

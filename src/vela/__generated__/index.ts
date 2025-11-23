@@ -3,7 +3,9 @@ export * from "./BitcraftActionLogState";
 export * from "./BitcraftAuctionListingState";
 export * from "./BitcraftBuildingDesc";
 export * from "./BitcraftBuildingState";
+export * from "./BitcraftCargoItem";
 export * from "./BitcraftChatMessage";
+export * from "./BitcraftClaimLocalState";
 export * from "./BitcraftClaimState";
 export * from "./BitcraftEmpireNodeSiegeState";
 export * from "./BitcraftEmpireNodeState";
@@ -26,7 +28,9 @@ import type { BitcraftActionLogState } from "./BitcraftActionLogState";
 import type { BitcraftAuctionListingState } from "./BitcraftAuctionListingState";
 import type { BitcraftBuildingDesc } from "./BitcraftBuildingDesc";
 import type { BitcraftBuildingState } from "./BitcraftBuildingState";
+import type { BitcraftCargoItem } from "./BitcraftCargoItem";
 import type { BitcraftChatMessage } from "./BitcraftChatMessage";
+import type { BitcraftClaimLocalState } from "./BitcraftClaimLocalState";
 import type { BitcraftClaimState } from "./BitcraftClaimState";
 import type { BitcraftEmpireNodeSiegeState } from "./BitcraftEmpireNodeSiegeState";
 import type { BitcraftEmpireNodeState } from "./BitcraftEmpireNodeState";
@@ -48,7 +52,9 @@ export enum BitcraftEntities {
   BitcraftAuctionListingState = "BitcraftAuctionListingState",
   BitcraftBuildingDesc = "BitcraftBuildingDesc",
   BitcraftBuildingState = "BitcraftBuildingState",
+  BitcraftCargoItem = "BitcraftCargoItem",
   BitcraftChatMessage = "BitcraftChatMessage",
+  BitcraftClaimLocalState = "BitcraftClaimLocalState",
   BitcraftClaimState = "BitcraftClaimState",
   BitcraftEmpireNodeSiegeState = "BitcraftEmpireNodeSiegeState",
   BitcraftEmpireNodeState = "BitcraftEmpireNodeState",
@@ -75,7 +81,9 @@ export type TAllEntityMap = {
   BitcraftAuctionListingState: BitcraftAuctionListingState;
   BitcraftBuildingDesc: BitcraftBuildingDesc;
   BitcraftBuildingState: BitcraftBuildingState;
+  BitcraftCargoItem: BitcraftCargoItem;
   BitcraftChatMessage: BitcraftChatMessage;
+  BitcraftClaimLocalState: BitcraftClaimLocalState;
   BitcraftClaimState: BitcraftClaimState;
   BitcraftEmpireNodeSiegeState: BitcraftEmpireNodeSiegeState;
   BitcraftEmpireNodeState: BitcraftEmpireNodeState;
@@ -113,6 +121,8 @@ export type TRegionalEntityMap = {
 // they are NOT cleared by the event gateways on restart to avoid them interfering with each other.
 export type TGlobalEntityMap = {
   BitcraftAuctionListingState: BitcraftAuctionListingState;
+  BitcraftCargoItem: BitcraftCargoItem;
+  BitcraftClaimLocalState: BitcraftClaimLocalState;
   BitcraftClaimState: BitcraftClaimState;
   BitcraftEmpireState: BitcraftEmpireState;
   BitcraftItem: BitcraftItem;
